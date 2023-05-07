@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Edit Lecturer</title>
+    <link rel="stylesheet" href="/css/lecturer/editLecturer.css" />
+  </head>
+  <body>
+    <header>
+      <div id="navbar"></div>
+    </header>
+    <div id="titleWrapper">
+      <h2 id="title">Edit Lecturer</h2>
+    </div>
+
+    <div class="container">
+      <form id="editLecturer">
+        <h3>First Name</h3>
+        <input type="text" id="firstName" name="firstName" required />
+        <h3>Last Name</h3>
+        <input type="text" id="lastName" name="lastName" required />
+        <h3>Email</h3>
+        <input type="email" id="email" name="email" required />
+
+        <input
+          type="submit"
+          id="btnEdit"
+          href="/html/lecturer/lecturer.html"
+          value="Edit Lecturer"
+        />
+      </form>
+    </div>
+
+    <div id="msgDialog">
+      <p id="message">Fill all data</p>
+      <button id="btnOK">OK</button>
+    </div>
+    <footer>
+      <div id="footer"></div>
+    </footer>
+    <script src="/src/loadComponents.js"></script>
+  </body>
+</html>

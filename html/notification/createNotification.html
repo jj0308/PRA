@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Create Notification</title>
+    <link rel="stylesheet" href="/css/notification/createNotification.css" />
+  </head>
+  <body>
+    <header>
+      <div id="navbar"></div>
+    </header>
+    <div id="titleWrapper">
+      <h2 id="title">Create notification</h2>
+    </div>
+
+    <div class="container">
+      <form id="createNotification">
+        <h3>Name</h3>
+        <input type="text" id="titleofNotification" name="name" required />
+        <h3>Course</h3>
+        <input type="text" id="course" name="course" required />
+        <h3>Description</h3>
+        <textarea id="description" name="description" rows="5"></textarea>
+        <input
+          type="submit"
+          id="btnCreate"
+          href="/html/notification/notification.html"
+          value="Create Notification"
+        />
+      </form>
+    </div>
+
+    <div id="msgDialog">
+      <p id="message">Successfully created</p>
+      <button id="btnOK">OK</button>
+    </div>
+    <footer>
+      <div id="footer"></div>
+    </footer>
+    <script src="/src/loadComponents.js"></script>
+  </body>
+</html>

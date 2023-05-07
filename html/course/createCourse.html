@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Create Course</title>
+    <link rel="stylesheet" href="/css/course/createCourse.css" />
+  </head>
+  <body>
+    <header>
+      <div id="navbar"></div>
+    </header>
+    <div id="titleWrapper">
+      <h2 id="title">Create Course</h2>
+    </div>
+
+    <div class="container">
+      <form id="createCourse">
+        <h3>Name</h3>
+        <input type="text" id="name" name="name" required />
+        <h3>Lecturer</h3>
+        <input type="text" id="lecturer" name="lecturer" required />
+
+        <input
+          type="submit"
+          id="btnCreate"
+          href="/html/course/course.html"
+          value="Create Course"
+        />
+      </form>
+    </div>
+
+    <div id="msgDialog">
+      <p id="message">Successfully created</p>
+      <button id="btnOK">OK</button>
+    </div>
+    <footer>
+      <div id="footer"></div>
+    </footer>
+    <script src="/src/loadComponents.js"></script>
+  </body>
+</html>

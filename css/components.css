@@ -11,12 +11,14 @@
 }
 nav ul {
   margin: 0;
-  padding: 0;
+  padding: 10px;
   list-style: none;
   display: flex;
+  justify-content: center;
+  align-items: center;
 }
 nav li {
-  margin-left: 20px;
+  margin-left: 30px;
 }
 nav a {
   color: #fff;
@@ -33,14 +35,23 @@ nav a:hover {
   background-color: #fff;
   color: #000;
 }
-
+#logoutIcon {
+  height: 35px;
+  width: 35px;
+}
 #footer {
-  background-color: #e27210;
+  background: linear-gradient(90deg, #e27210 0%, #c40f61 100%);
   color: #fff;
   text-align: center;
-  padding: 5px;
-  position: fixed;
-  left: 0;
-  bottom: 0;
+  position: sticky;
   width: 100%;
+  bottom: 0;
+  height: 90px;
+}
+
+#textFooter {
+  font-size: 24px;
+  font-weight: 200;
+  line-height: 90px;
+  text-align: center;
 }
