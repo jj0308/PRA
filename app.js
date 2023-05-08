@@ -119,7 +119,7 @@ app.post("/login", async (req, res) => {
 const auth = require("./middleware/auth");
 
 const Course = require("./model/course");
-app.post("/create_course", admin_auth, async(req, res) => {
+app.post("/course", admin_auth, async(req, res) => {
 
   // Our register logic starts here
   try {
@@ -154,61 +154,13 @@ app.post("/create_course", admin_auth, async(req, res) => {
 });
 
 const Notification = require("./model/notification");
-app.post("/create_notification_admin", admin_auth, async(req, res) => {
-
+app.post("/notification", auth, async(req, res) => {
+  
+ 
   // Our register logic starts here
   try {
     // Get user input
-    const { name, description, date_expired, user_id, course_id } = req.body;
-    const date_created = new Date().toLocaleDateString('en-US');
-
-    // Validate user input
-    if (!(name, description, date_expired, user_id, course_id)) {
-      return res.status(400).send("All input is required");
-    }
-    if (!user_id.match(/^[0-9a-fA-F]{24}$/)) {
-      return res.status(400).send("User ID is in wrong format");
-    }
-    if (!course_id.match(/^[0-9a-fA-F]{24}$/)) {
-      return res.status(400).send("Course ID is in wrong format");
-    }
-    if (date_expired < date_created) {
-      return res.status(400).send("Expiration date must be a date from today or later!");
-    }
-    let _id = user_id;
-    const user = await User.findById({ _id });
-
-    if (!user) {
-      return res.status(409).send("ID doesn't match any user!");
-    }
-
-    _id = course_id;
-    const course = await Course.findById({_id});
-    if (!course) {
-      return res.status(409).send("ID doesn't match any course!");
-    }
-    // Create user in our database
-    const notification = await Notification.create({
-      name,
-      description,
-      date_created,
-      date_expired,
-      user_id,
-      course_id
-    });
-    // return new user
-    res.status(201).json(notification);
-  } catch (err) {
-    console.log(err);
-  }
-});
-
-
-app.post("/create_notification_lecturer", auth, async(req, res) => {
-
-  // Our register logic starts here
-  try {
-    // Get user input
+    
     const { name, description, date_expired, user_id, course_id } = req.body;
     const date_created = new Date().toLocaleDateString('en-US');
 
@@ -226,17 +178,17 @@ app.post("/create_notification_lecturer", auth, async(req, res) => {
       return res.status(400).send("Expiration date must be a date from today or later!");
     }
     const user = await User.findOne({ "_id" : user_id });
+
     if (!user) {
       return res.status(409).send("ID doesn't match any user!");
     }
 
-    const course = await Course.findOne({"id" : course_id, "user_id" : user_id});
+    const course = await Course.findOne({ "_id" : course_id });
     if (!course) {
       return res.status(409).send("ID doesn't match any course!");
     }
 
 
-    // Create user in our database
     const notification = await Notification.create({
       name,
       description,
@@ -252,7 +204,76 @@ app.post("/create_notification_lecturer", auth, async(req, res) => {
   }
 });
 
-app.get("/all_lecturers_admin", admin_auth, async (req, res) => {
+
+// app.post("/create_notification_lecturer", auth, async(req, res) => {
+
+//   // Our register logic starts here
+//   try {
+//     // Get user input
+//     const { name, description, date_expired, user_id, course_id } = req.body;
+//     const date_created = new Date().toLocaleDateString('en-US');
+
+//     // Validate user input
+//     if (!(name, description, date_expired, user_id, course_id)) {
+//       return res.status(400).send("All input is required");
+//     }
+//     if (!user_id.match(/^[0-9a-fA-F]{24}$/)) {
+//       return res.status(400).send("User ID is in wrong format");
+//     }
+//     if (!course_id.match(/^[0-9a-fA-F]{24}$/)) {
+//       return res.status(400).send("Course ID is in wrong format");
+//     }
+//     if (date_expired < date_created) {
+//       return res.status(400).send("Expiration date must be a date from today or later!");
+//     }
+//     const user = await User.findOne({ "_id" : user_id });
+//     if (!user) {
+//       return res.status(409).send("ID doesn't match any user!");
+//     }
+
+//     const course = await Course.findOne({"id" : course_id, "user_id" : user_id});
+//     if (!course) {
+//       return res.status(409).send("ID doesn't match any course!");
+//     }
+
+
+//     // Create user in our database
+//     const notification = await Notification.create({
+//       name,
+//       description,
+//       date_created,
+//       date_expired,
+//       user_id,
+//       course_id
+//     });
+//     // return new user
+//     res.status(201).json(notification);
+//   } catch (err) {
+//     console.log(err);
+//   }
+// });
+
+app.get("/lecturer/:user_id", admin_auth, async (req, res) => {
+
+  try {
+    const user_id = req.params.user_id;
+    if (!user_id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).send("User ID is in wrong format");
+    }
+
+    const user = await User.findOne({ "_id" : user_id });
+
+    if (!user) {
+      return res.status(503).send("No user available");
+    }
+    // return new user
+    res.status(200).json(user);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+app.get("/lecturers", admin_auth, async (req, res) => {
 
   // Our register logic starts here
   try {
@@ -269,7 +290,7 @@ app.get("/all_lecturers_admin", admin_auth, async (req, res) => {
   }
 });
 
-app.get("/all_courses_admin", admin_auth, async (req, res) => {
+app.get("/courses", admin_auth, async (req, res) => {
 
   // Our register logic starts here
   try {
@@ -286,7 +307,7 @@ app.get("/all_courses_admin", admin_auth, async (req, res) => {
   }
 });
 
-app.get("/all_notifications_admin", admin_auth, async (req, res) => {
+app.get("/notifications", admin_auth, async (req, res) => {
 
   // Our register logic starts here
   try {
@@ -303,7 +324,7 @@ app.get("/all_notifications_admin", admin_auth, async (req, res) => {
   }
 });
 
-app.get(`/all_courses_lecturer/:user_id`, auth, async (req, res) => {
+app.get(`/lecturer/:user_id`, auth, async (req, res) => {
 
   // Our register logic starts here
   try {
@@ -312,19 +333,40 @@ app.get(`/all_courses_lecturer/:user_id`, auth, async (req, res) => {
       return res.status(400).send("User ID is in wrong format");
     }
 
-    const courses = await Course.find({ "user_id" : user_id });
+    const user = await Course.find({ "user_id" : user_id });
 
-    if (!courses) {
-      return res.status(503).send("No courses available");
+    if (!user) {
+      return res.status(503).send("No user available");
     }
     // return new user
-    res.status(200).json(courses);
+    res.status(200).json(user);
   } catch (err) {
     console.log(err);
   }
 });
 
-app.get(`/all_notifications_lecturer/:user_id`, auth, async (req, res) => {
+app.get(`/course/:course_id`, auth, async (req, res) => {
+
+  // Our register logic starts here
+  try {
+    const course_id = req.params.course_id;
+    if (!course_id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).send("Course ID is in wrong format");
+    }
+
+    const course = await Course.findOne({ "_id" : course_id });
+
+    if (!course) {
+      return res.status(503).send("No courses available");
+    }
+    // return new user
+    res.status(200).json(course);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+app.get(`/notifications/:user_id`, auth, async (req, res) => {
 
   // Our register logic starts here
   try {
@@ -346,7 +388,28 @@ app.get(`/all_notifications_lecturer/:user_id`, auth, async (req, res) => {
   }
 });
 
-app.delete(`/delete_lecturer/:user_id`, admin_auth, async (req, res) => {
+app.get(`/notification/:notification_id`, auth, async (req, res) => {
+
+  // Our register logic starts here
+  try {
+    const notification_id = req.params.notification_id;
+
+    if (!notification_id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).send("Notification ID is in wrong format");
+    }
+    const notification = await Notification.findOne({ "id": notification_id });
+
+    if (!notification) {
+      return res.status(503).send("No notification available");
+    }
+    // return new user
+    res.status(200).json(notification);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+app.delete(`/lecturer/:user_id`, admin_auth, async (req, res) => {
 
   // Our register logic starts here
   try {
@@ -370,7 +433,7 @@ app.delete(`/delete_lecturer/:user_id`, admin_auth, async (req, res) => {
   }
 });
 
-app.delete(`/delete_course/:course_id`, admin_auth, async (req, res) => {
+app.delete(`/course/:course_id`, admin_auth, async (req, res) => {
 
   // Our register logic starts here
   try {
@@ -393,30 +456,23 @@ app.delete(`/delete_course/:course_id`, admin_auth, async (req, res) => {
   }
 });
 
-app.delete(`/delete_notification/:user_id/:notification_id`, auth, async (req, res) => {
+app.delete(`/notification/:notification_id`, auth, async (req, res) => {
 
   // Our register logic starts here
   try {
-    const user_id = req.params.user_id;
     const notification_id = req.params.notification_id;
 
-    if (!user_id.match(/^[0-9a-fA-F]{24}$/)) {
-      return res.status(400).send("User ID is in wrong format");
-    }
+
     if (!notification_id.match(/^[0-9a-fA-F]{24}$/)) {
       return res.status(400).send("Notification ID is in wrong format");
     }
 
-    const user = await User.findOne({ "_id" : user_id });
-    if (!user) {
-      return res.status(400).send("No user matches ID");
-    }
 
-    const notification = await Notification.findOne({ "_id" : notification_id, "user_id" : user_id});
+    const notification = await Notification.findOne({ "_id" : notification_id});
     if (!notification) {
       return res.status(400).send("No notification of specified user matches ID");
     }
-    await Notification.deleteOne({"_id" : notification_id, "user_id" : user_id});
+    await Notification.deleteOne({"_id" : notification_id});
 
     // return new user
     res.status(200).json(notification);
@@ -425,7 +481,7 @@ app.delete(`/delete_notification/:user_id/:notification_id`, auth, async (req, r
   }
 });
 
-app.put(`/update_user/:user_id`, auth, async (req, res) => {
+app.put(`/lecturer/:user_id`, admin_auth, async (req, res) => {
 
   // Our register logic starts here
   try {
@@ -496,7 +552,7 @@ app.put(`/update_user/:user_id`, auth, async (req, res) => {
   }
 });
 
-app.put(`/update_course/:course_id`, admin_auth, async (req, res) => {
+app.put(`/course/:course_id`, admin_auth, async (req, res) => {
 
   // Our register logic starts here
   try {
@@ -519,7 +575,7 @@ app.put(`/update_course/:course_id`, admin_auth, async (req, res) => {
     if (!course) {
       return res.status(409).send("ID doesn't match any course!");
     }
-    const user = await User.findById({ _id });
+    const user = await User.findOne({ "_id" : user_id });
     if (!user) {
       return res.status(409).send("ID doesn't match any user!");
     }
@@ -532,6 +588,64 @@ app.put(`/update_course/:course_id`, admin_auth, async (req, res) => {
     }});
 
     res.status(200).json(updatedCourse);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+app.put(`/notification/:notification_id`, auth, async (req, res) => {
+
+  // Our register logic starts here
+  try {
+
+    const notification_id = req.params.notification_id;
+    const { name, description, date_expired, user_id, course_id } = req.body;
+
+    
+
+    // Validate user input
+    if (!(name, description, date_expired, user_id, course_id)) {
+      return res.status(400).send("All input is required");
+    }
+    if (!user_id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).send("User ID is in wrong format");
+    }
+    if (!course_id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).send("Course ID is in wrong format");
+    }
+
+    if (!notification_id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).send("Notification ID is in wrong format");
+    }
+
+    const user = await User.findOne({ "_id" : course_id });
+    if (!user) {
+      return res.status(409).send("ID doesn't match any user!");
+    }
+
+    const course = await Course.findOne({ "_id" : course_id });
+    if (!course) {
+      return res.status(409).send("ID doesn't match any course!");
+    }
+    const notification = await Notification.findOne({ "_id" : notification_id });
+    if (!notification) {
+      return res.status(409).send("ID doesn't match any notification!");
+    }
+    if (date_expired < notification["date_created"]) {
+      return res.status(400).send("Expiration date must be a more recent date!");
+    }
+
+
+    // Create user in our database
+    const updatedNotification = await Course.updateOne({"_id" : course_id}, {$set : {
+      "name": name, 
+      "description" : description, 
+      "date_expired" : date_expired, 
+      "user_id" : user_id,
+      "course_id" : course_id
+    }});
+
+    res.status(200).json(updatedNotification);
   } catch (err) {
     console.log(err);
   }
