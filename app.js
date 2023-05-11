@@ -4,8 +4,10 @@ const express = require("express");
 const bcrypt = require('bcryptjs');
 const jwt = require("jsonwebtoken");
 const app = express();
+var cors = require('cors')
 
 app.use(express.json());
+app.use(cors())
 
 // Logic goes here
 
