@@ -1,21 +1,22 @@
 async function handleLogin(event) {
   event.preventDefault();
 
-  const username = document.getElementById("username").value;
+  const email = document.getElementById("username").value;
   const password = document.getElementById("password").value;
 
   // Create the request payload
   const data = {
-    username,
+    email,
     password,
   };
 
   try {
-    const response = await fetch("https://pra-backend.onrender.com/login", {
+    const response = await fetch(`http://localhost:3030/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
+
       body: JSON.stringify(data),
     });
 
