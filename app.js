@@ -326,7 +326,7 @@ app.get("/notifications", admin_auth, async (req, res) => {
   }
 });
 
-app.get(`/lecturer/:user_id`, auth, async (req, res) => {
+app.get(`/courses/:user_id`, auth, async (req, res) => {
 
   // Our register logic starts here
   try {
@@ -335,13 +335,13 @@ app.get(`/lecturer/:user_id`, auth, async (req, res) => {
       return res.status(400).send("User ID is in wrong format");
     }
 
-    const user = await Course.find({ "user_id" : user_id });
+    const courses = await Course.find({ "user_id" : user_id });
 
     if (!user) {
-      return res.status(503).send("No user available");
+      return res.status(503).send("No courses available");
     }
     // return new user
-    res.status(200).json(user);
+    res.status(200).json(courses);
   } catch (err) {
     console.log(err);
   }
