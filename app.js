@@ -4,6 +4,8 @@ const express = require("express");
 const bcrypt = require('bcryptjs');
 const jwt = require("jsonwebtoken");
 const app = express();
+const mongoose = require('mongoose');
+
 
 
 app.use(express.json());
@@ -202,7 +204,6 @@ app.post("/notification", auth, async(req, res) => {
       user_id,
       course_id
     });
-    // return new user
     res.status(201).json(notification);
   } catch (err) {
     console.log(err);
@@ -300,7 +301,33 @@ app.get("/courses", admin_auth, async (req, res) => {
   // Our register logic starts here
   try {
     
-    const courses = await Course.find({ });
+    const courses = await Course.aggregate([
+      {
+        $lookup: {
+          from: "users",
+          let: { userId: { $toObjectId: "$user_id" } },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$_id", "$$userId"] }
+              }
+            },
+            {
+              $project: {
+                full_name: { $concat: ["$first_name", " ", "$last_name"] }
+              }
+            }
+          ],
+          as: "user"
+        }
+      },
+      {
+        $unwind: {
+          path: "$user",
+          preserveNullAndEmptyArrays: true
+        }
+      }
+    ])
 
     if (!courses) {
       return res.status(503).send("No courses available");
@@ -317,10 +344,35 @@ app.get("/notifications", admin_auth, async (req, res) => {
   // Our register logic starts here
   try {
     
-    const notifications = await Notification.find({ });
-
+    const notifications = await Notification.aggregate([
+      {
+        $lookup: {
+          from: "users",
+          let: { userId: { $toObjectId: "$user_id" } },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$_id", "$$userId"] }
+              }
+            },
+            {
+              $project: {
+                full_name: { $concat: ["$first_name", " ", "$last_name"] }
+              }
+            }
+          ],
+          as: "user"
+        }
+      },
+      {
+        $unwind: {
+          path: "$user",
+          preserveNullAndEmptyArrays: true
+        }
+      }
+    ])
     if (!notifications) {
-      return res.status(503).send("No courses available");
+      return res.status(503).send("No notifications available");
     }
     // return new user
     res.status(200).json(notifications);
@@ -338,9 +390,40 @@ app.get(`/courses/:user_id`, auth, async (req, res) => {
       return res.status(400).send("User ID is in wrong format");
     }
 
-    const courses = await Course.find({ "user_id" : user_id });
+    const courses = await Course.aggregate([
+      {
+        $lookup: {
+          from: "users",
+          let: { userId: { $toObjectId: "$user_id" } },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$_id", "$$userId"] }
+              }
+            },
+            {
+              $project: {
+                full_name: { $concat: ["$first_name", " ", "$last_name"] }
+              }
+            }
+          ],
+          as: "user"
+        }
+      },
+      {
+        $unwind: {
+          path: "$user",
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $match: {
+          "user._id": new mongoose.Types.ObjectId(user_id)
+        }
+      }
+    ]);    
 
-    if (!user) {
+    if (!courses) {
       return res.status(503).send("No courses available");
     }
     // return new user
@@ -381,8 +464,38 @@ app.get(`/notifications/:user_id`, auth, async (req, res) => {
       return res.status(400).send("User ID is in wrong format");
     }
 
-    const notifications = await Notification.find({ "user_id" : user_id });
-
+    const notifications = await Notification.aggregate([
+      {
+        $lookup: {
+          from: "users",
+          let: { userId: { $toObjectId: "$user_id" } },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$_id", "$$userId"] }
+              }
+            },
+            {
+              $project: {
+                full_name: { $concat: ["$first_name", " ", "$last_name"] }
+              }
+            }
+          ],
+          as: "user"
+        }
+      },
+      {
+        $unwind: {
+          path: "$user",
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $match: {
+          "user._id": new mongoose.Types.ObjectId(user_id)
+        }
+      }
+    ]);   
     if (!notifications) {
       return res.status(503).send("No notifications available");
     }
@@ -428,7 +541,8 @@ app.delete(`/lecturer/:user_id`, admin_auth, async (req, res) => {
       return res.status(400).send("No lecturer matches ID");
     }
 
-    await Course.updateMany({"_id" : user_id}, {$set: {"user_id" : null}});
+    await Course.updateMany({"user_id" : user_id}, {$set: {"user_id" : null}});
+    await Notification.deleteMany({"user_id" : user_id});
     await User.deleteOne({"_id" : user_id, "administrator" : false});
 
     // return new user
