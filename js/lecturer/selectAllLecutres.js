@@ -31,9 +31,9 @@ function populateTable(data, table) {
         <a id="btnEdit" href="/html/lecturer/editLecturer.html?id=${lecture._id}">
           <img src="/media/edit.png" alt=""/>
         </a>
-        <button class="btnDelete" data-user-id="${lecture._id}">
+        <a id="btnDelete" href="#!" data-user-id="${lecture._id}">
           <img src="/media/delete.png" alt="Delete" />
-        </button>
+        </a>
 
       </div>
     `;
@@ -44,5 +44,13 @@ function populateTable(data, table) {
     row.appendChild(optionsCell);
 
     table.appendChild(row);
+
+    // Add event listener to all delete buttons
+  let deleteButtons = document.querySelectorAll("#btnDelete");
+  deleteButtons.forEach((button) => {
+    button.addEventListener("click", deleteUser);
+  });
+
+
   });
 }

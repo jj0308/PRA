@@ -27,7 +27,8 @@ function deleteUser(event) {
 
 // Add event listener to all delete buttons
 document.addEventListener("DOMContentLoaded", (event) => {
-  let deleteButtons = document.querySelectorAll(".btnDelete");
+  let deleteButtons = document.querySelectorAll("#btnDelete");
+  console.log("buttons");
   console.log(deleteButtons);
   deleteButtons.forEach((button) => {
     button.addEventListener("click", deleteUser);
