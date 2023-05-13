@@ -212,54 +212,6 @@ app.post("/notification", auth, async(req, res) => {
 });
 
 
-// app.post("/create_notification_lecturer", auth, async(req, res) => {
-
-//   // Our register logic starts here
-//   try {
-//     // Get user input
-//     const { name, description, date_expired, user_id, course_id } = req.body;
-//     const date_created = new Date().toLocaleDateString('en-US');
-
-//     // Validate user input
-//     if (!(name, description, date_expired, user_id, course_id)) {
-//       return res.status(400).send("All input is required");
-//     }
-//     if (!user_id.match(/^[0-9a-fA-F]{24}$/)) {
-//       return res.status(400).send("User ID is in wrong format");
-//     }
-//     if (!course_id.match(/^[0-9a-fA-F]{24}$/)) {
-//       return res.status(400).send("Course ID is in wrong format");
-//     }
-//     if (date_expired < date_created) {
-//       return res.status(400).send("Expiration date must be a date from today or later!");
-//     }
-//     const user = await User.findOne({ "_id" : user_id });
-//     if (!user) {
-//       return res.status(409).send("ID doesn't match any user!");
-//     }
-
-//     const course = await Course.findOne({"id" : course_id, "user_id" : user_id});
-//     if (!course) {
-//       return res.status(409).send("ID doesn't match any course!");
-//     }
-
-
-//     // Create user in our database
-//     const notification = await Notification.create({
-//       name,
-//       description,
-//       date_created,
-//       date_expired,
-//       user_id,
-//       course_id
-//     });
-//     // return new user
-//     res.status(201).json(notification);
-//   } catch (err) {
-//     console.log(err);
-//   }
-// });
-
 app.get("/lecturer/:user_id", admin_auth, async (req, res) => {
 
   try {
@@ -346,57 +298,57 @@ app.get("/notifications", admin_auth, async (req, res) => {
   try {
     
     const notifications = await Notification.aggregate([
-      {
-        $lookup: {
-          from: "users",
-          let: { userId: { $toObjectId: "$user_id" } },
-          pipeline: [
-            {
-              $match: {
-                $expr: { $eq: ["$_id", "$$userId"] }
-              }
-            },
-            {
-              $project: {
-                full_name: { $concat: ["$first_name", " ", "$last_name"] }
-              }
+    {
+      $lookup: {
+        from: "users",
+        let: { userId: { $toObjectId: "$user_id" } },
+        pipeline: [
+          {
+            $match: {
+              $expr: { $eq: ["$_id", "$$userId"] }
             }
-          ],
-          as: "user"
-        }
-      },
-      {
-        $unwind: {
-          path: "$user",
-          preserveNullAndEmptyArrays: true
-        }
-      },
-      {
-        $lookup: {
-          from: "courses",
-          let: { courseId: { $toObjectId: "$course_id" } },
-          pipeline: [
-            {
-              $match: {
-                $expr: { $eq: ["$_id", "$$courseId"] }
-              }
-            },
-            {
-              $project: {
-                course_name: "$name"
-              }
+          },
+          {
+            $project: {
+              full_name: { $concat: ["$first_name", " ", "$last_name"] }
             }
-          ],
-          as: "course"
-        }
-      },
-      {
-        $unwind: {
-          path: "$course",
-          preserveNullAndEmptyArrays: true
-        }
+          }
+        ],
+        as: "user"
       }
-    ]);
+    },
+    {
+      $unwind: {
+        path: "$user",
+        preserveNullAndEmptyArrays: true
+      }
+    },
+    {
+      $lookup: {
+        from: "courses",
+        let: { courseId: { $toObjectId: "$course_id" } },
+        pipeline: [
+          {
+            $match: {
+              $expr: { $eq: ["$_id", "$$courseId"] }
+            }
+          },
+          {
+            $project: {
+              course_name: "$name"
+            }
+          }
+        ],
+        as: "course"
+      }
+    },
+    {
+      $unwind: {
+        path: "$course",
+        preserveNullAndEmptyArrays: true
+      }
+    }
+  ]);
     if (!notifications) {
       return res.status(503).send("No notifications available");
     }

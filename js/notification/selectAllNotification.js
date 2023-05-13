@@ -58,7 +58,7 @@ function createNotificationCard(notification) {
 
   let course = document.createElement("p");
   course.className = "nameOfCourse";
-  course.innerText = notification.name;
+  course.innerText = notification["course"]["course_name"];
 
   let description = document.createElement("p");
   description.className = "description";
