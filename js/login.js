@@ -11,7 +11,7 @@ async function handleLogin(event) {
   };
 
   try {
-    const response = await fetch(`http://pra-api.onrender.com/login`, {
+    const response = await fetch(`https://pra-api.onrender.com/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -23,8 +23,12 @@ async function handleLogin(event) {
     if (response.ok) {
       const data = await response.json();
       const token = data.token;
+      const role = data.administrator;
+      const userId = data._id;
 
       localStorage.setItem("token", token);
+      localStorage.setItem("role", role);
+      localStorage.setItem("userId", userId);
 
       window.location.href = "/html/index.html";
     } else {

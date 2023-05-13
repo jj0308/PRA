@@ -6,7 +6,7 @@ function handleEditLecturer(event) {
   const email = document.getElementById("email").value;
 
   //ne znam kako dohvatiti user id
-  const userId = "<USER_ID>";
+  const userId = localStorage.getItem("userId");
 
   const data = {
     first_name: firstName,
