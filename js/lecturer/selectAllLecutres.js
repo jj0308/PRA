@@ -46,8 +46,8 @@ function populateTable(data, table) {
     table.appendChild(row);
 
     // Add event listener to all delete buttons
-  let deleteButtons = document.querySelectorAll("#btnDelete");
-  deleteButtons.forEach((button) => {
+    let deleteButtons = document.querySelectorAll("#btnDelete");
+    deleteButtons.forEach((button) => {
     button.addEventListener("click", deleteUser);
   });
 
