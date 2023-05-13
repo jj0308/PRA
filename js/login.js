@@ -11,7 +11,7 @@ async function handleLogin(event) {
   };
 
   try {
-    const response = await fetch(`https://pra-api.onrender.com/login`, {
+    const response = await fetch(`https://pra-api.onrender.com/login/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
