@@ -626,18 +626,22 @@ app.put(`/lecturer/:user_id`, admin_auth, async (req, res) => {
     if (!user) {
       return res.status(400).send("Lecturer doesn't exist");
     }
-    let updatedUser;
+    const oldUser = await User.findOne({ "_id": { $ne: user_id }, "email" : email});
+    if (oldUser) {
+      return res.status(400).send("Email already in use!");
+
+    }
     //Encrypt user password
     if (password) {
       encryptedPassword = await bcrypt.hash(password, 10);
-      updatedUser = await User.updateOne({"_id" : user_id}, {$set : {
+      await User.updateOne({"_id" : user_id}, {$set : {
         first_name,
         last_name,
         email: email.toLowerCase(), // sanitize: convert email to lowercase
         password: encryptedPassword}});
     }
     else {
-      updatedUser = await User.updateOne({"_id" : user_id}, {$set : {
+      await User.updateOne({"_id" : user_id}, {$set : {
         first_name,
         last_name,
         email: email.toLowerCase(), // sanitize: convert email to lowercase
@@ -656,7 +660,7 @@ app.put(`/lecturer/:user_id`, admin_auth, async (req, res) => {
         user.token = token;
     
 
-
+        const updatedUser = await User.findOne({"_id" : user_id, "administrator" : false}); 
 
 
     // return new user
