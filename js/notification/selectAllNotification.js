@@ -1,18 +1,21 @@
-//if logged user is admin get from this url GET https://pra-api.onrender.com/notifications admin_auth and set dinamicly notifications in index.html
-role: localStorage.getItem("role");
-userId: localStorage.getItem("userId");
+window.onload = function () {
+  let role = localStorage.getItem("role") === "true";
+  let userId = localStorage.getItem("userId");
 
-if (role === true) {
-  getNotificationsAdmin();
-} else {
-  getNotifications();
-}
+  if (role) {
+    getNotificationsAdmin();
+  } else {
+    getNotifications(userId);
+  }
+};
 
 function getNotificationsAdmin() {
+  console.log("tu sam");
   fetch("https://pra-api.onrender.com/notifications", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
+      "x-access-token": localStorage.getItem("token"),
     },
   })
     .then((res) => res.json())
@@ -27,7 +30,7 @@ function getNotificationsAdmin() {
     .catch((err) => console.log(err));
 }
 
-function getNotifications() {
+function getNotifications(userId) {
   fetch(`https://pra-api.onrender.com/notifications/${userId}/`, {
     method: "GET",
     headers: {
@@ -43,19 +46,20 @@ function getNotifications() {
         });
       }
     })
-    .catch((err) => console.log(err));
+    .catch((err) => console.log(err + "tu pukne 2"));
 }
+
 function createNotificationCard(notification) {
   let divCard = document.createElement("div");
   divCard.className = "notificationCard";
 
   let title = document.createElement("h3");
   title.className = "titleOfNotification";
-  title.innerText = notification.title;
+  title.innerText = notification.name;
 
   let course = document.createElement("p");
   course.className = "nameOfCourse";
-  course.innerText = notification.course;
+  course.innerText = notification.name;
 
   let description = document.createElement("p");
   description.className = "description";
@@ -66,11 +70,11 @@ function createNotificationCard(notification) {
 
   let date = document.createElement("p");
   date.className = "date";
-  date.innerText = notification.date;
+  date.innerText = notification.date_created;
 
   let creator = document.createElement("p");
   creator.className = "creator";
-  creator.innerText = notification.creator;
+  creator.innerText = notification.userId;
 
   informations.appendChild(date);
   informations.appendChild(creator);

@@ -48,7 +48,7 @@ function createCourseRowAdmin(course) {
   const optionsWrapperDiv = document.createElement("div");
 
   courseNameTd.textContent = course.title;
-  courseLecturerTd.textContent = course.lecturer; // Assuming that the lecturer's name is returned by the API as well.
+  courseLecturerTd.textContent = course.lecturer;
 
   optionsWrapperDiv.innerHTML = `
     <a id="btnEdit" href="/html/course/editCourse.html?id=${course.id}">

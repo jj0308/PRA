@@ -7,25 +7,25 @@ function handleRegister(event) {
   const password = document.getElementById("password").value;
 
   const data = {
-    firstName: firstName,
-    lastName: lastName,
+    first_name: firstName,
+    last_name: lastName,
     email: email,
     password: password,
   };
 
-  const token = localStorage.getItem("token");
-
-  fetch("https://pra-backend.onrender.com/register", {
+  fetch("https://pra-api.onrender.com/register", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
+      "x-access-token": localStorage.getItem("token"),
     },
     body: JSON.stringify(data),
   })
     .then(function (response) {
       if (response.ok) {
         window.location.href = "/html/lecturer/lecturer.html";
+      } else if (response.status === 409) {
+        alert("Registration failed. This user may already exist.");
       } else {
         alert("Registration failed. Please try again.");
       }

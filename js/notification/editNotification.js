@@ -7,6 +7,8 @@ function handleEditNotification(event) {
   const description = document.getElementById("description").value;
 
   //nisam zna kako da dodam notification id
+  //get this notificationId form the url of the notification
+
   const notificationId = "<NOTIFICATION_ID>";
 
   const data = {
