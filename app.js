@@ -370,8 +370,33 @@ app.get("/notifications", admin_auth, async (req, res) => {
           path: "$user",
           preserveNullAndEmptyArrays: true
         }
+      },
+      {
+        $lookup: {
+          from: "courses",
+          let: { courseId: { $toObjectId: "$course_id" } },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$_id", "$$courseId"] }
+              }
+            },
+            {
+              $project: {
+                course_name: "$name"
+              }
+            }
+          ],
+          as: "course"
+        }
+      },
+      {
+        $unwind: {
+          path: "$course",
+          preserveNullAndEmptyArrays: true
+        }
       }
-    ])
+    ]);
     if (!notifications) {
       return res.status(503).send("No notifications available");
     }
@@ -464,7 +489,6 @@ app.get(`/notifications/:user_id`, auth, async (req, res) => {
     if (!user_id.match(/^[0-9a-fA-F]{24}$/)) {
       return res.status(400).send("User ID is in wrong format");
     }
-
     const notifications = await Notification.aggregate([
       {
         $lookup: {
@@ -492,11 +516,36 @@ app.get(`/notifications/:user_id`, auth, async (req, res) => {
         }
       },
       {
+        $lookup: {
+          from: "courses",
+          let: { courseId: { $toObjectId: "$course_id" } },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$_id", "$$courseId"] }
+              }
+            },
+            {
+              $project: {
+                course_name: "$name"
+              }
+            }
+          ],
+          as: "course"
+        }
+      },
+      {
+        $unwind: {
+          path: "$course",
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
         $match: {
           "user._id": new mongoose.Types.ObjectId(user_id)
         }
       }
-    ]);   
+    ]); 
     if (!notifications) {
       return res.status(503).send("No notifications available");
     }

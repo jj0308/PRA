@@ -10,7 +10,6 @@ window.onload = function () {
 };
 
 function getNotificationsAdmin() {
-  console.log("tu sam");
   fetch("https://pra-api.onrender.com/notifications", {
     method: "GET",
     headers: {
@@ -74,8 +73,13 @@ function createNotificationCard(notification) {
 
   let creator = document.createElement("p");
   creator.className = "creator";
-  creator.innerText = notification.userId;
-
+  if (notification["user"]) {
+    creator.innerText = notification["user"]["full_name"];
+  }
+  else{
+    creator.innerText = "Deleted user"
+  }
+  
   informations.appendChild(date);
   informations.appendChild(creator);
 
