@@ -1,92 +1,104 @@
 window.onload = function () {
-  let role = localStorage.getItem("role") === "true";
   let userId = localStorage.getItem("userId");
 
-  if (role) {
-    getNotificationsAdmin();
+  if ("true" === localStorage.getItem("role")) {
+    getNotificationAdmin();
   } else {
-    getNotifications(userId);
+    getNotification();
   }
 };
-
-function getNotificationsAdmin() {
-  fetch("https://pra-api.onrender.com/notifications", {
+function getNotificationAdmin() {
+  const url = `https://pra-api.onrender.com/notifications`;
+  fetch(url, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
       "x-access-token": localStorage.getItem("token"),
     },
   })
-    .then((res) => res.json())
+    .then((response) => response.json())
     .then((data) => {
-      console.log(data);
-      if (data.length > 0) {
-        data.forEach((notification) => {
-          createNotificationCard(notification);
-        });
-      }
+      appendNotificationsToTableAdmin(data);
     })
-    .catch((err) => console.log(err));
+    .catch((error) => {
+      console.error("Error:", error);
+    });
 }
 
-function getNotifications(userId) {
-  fetch(`https://pra-api.onrender.com/notifications/${userId}/`, {
+function getNotification() {
+  const userId = localStorage.getItem("userId");
+  const url = `https://pra-api.onrender.com/notifications/${userId}`;
+  fetch(url, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
+      "x-access-token": localStorage.getItem("token"),
     },
   })
-    .then((res) => res.json())
+    .then((response) => response.json())
     .then((data) => {
-      console.log(data);
-      if (data.length > 0) {
-        data.forEach((notification) => {
-          createNotificationCard(notification);
-        });
-      }
+      appendNotificationsToTableAdmin(data);
     })
-    .catch((err) => console.log(err + "tu pukne 2"));
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+}
+function createNotificationRowAdmin(notification) {
+  console.log(notification);
+  const notificationTr = document.createElement("tr");
+  const titleTd = document.createElement("td");
+  const course = document.createElement("td");
+  const descriptionTd = document.createElement("td");
+  const dateCreatedTd = document.createElement("td");
+  const endDateTd = document.createElement("td");
+  const creatorTd = document.createElement("td");
+  const optionsTd = document.createElement("td");
+  const optionsWrapperDiv = document.createElement("div");
+
+  titleTd.textContent = notification.name;
+
+  course.textContent = notification.course.course_name;
+  descriptionTd.textContent = notification.description;
+  dateCreatedTd.textContent = formatDate(notification.date_created);
+  endDateTd.textContent = formatDate(notification.date_expired);
+  creatorTd.textContent = notification.user.full_name;
+
+  optionsWrapperDiv.innerHTML = `
+    <a id="btnEdit" href="/html/notification/editNotification.html?id=${notification._id}">
+      <img src="/media/edit.png" alt="Edit"/>
+    </a>
+    <button id="btnDelete" data-notification-id="${notification._id}">
+      <img src="/media/delete.png" alt="Delete" />
+    </button>
+  `;
+
+  optionsTd.appendChild(optionsWrapperDiv);
+
+  notificationTr.appendChild(titleTd);
+  notificationTr.appendChild(course);
+  notificationTr.appendChild(descriptionTd);
+  notificationTr.appendChild(dateCreatedTd);
+  notificationTr.appendChild(endDateTd);
+  notificationTr.appendChild(creatorTd);
+  notificationTr.appendChild(optionsTd);
+
+  return notificationTr;
 }
 
-function createNotificationCard(notification) {
-  let divCard = document.createElement("div");
-  divCard.className = "notificationCard";
-
-  let title = document.createElement("h3");
-  title.className = "titleOfNotification";
-  title.innerText = notification.name;
-
-  let course = document.createElement("p");
-  course.className = "nameOfCourse";
-  course.innerText = notification["course"]["course_name"];
-
-  let description = document.createElement("p");
-  description.className = "description";
-  description.innerText = notification.description;
-
-  let informations = document.createElement("div");
-  informations.className = "informations";
-
-  let date = document.createElement("p");
-  date.className = "date";
-  date.innerText = notification.date_created;
-
-  let creator = document.createElement("p");
-  creator.className = "creator";
-  if (notification["user"]) {
-    creator.innerText = notification["user"]["full_name"];
-  }
-  else{
-    creator.innerText = "Deleted user"
-  }
-  
-  informations.appendChild(date);
-  informations.appendChild(creator);
-
-  divCard.appendChild(title);
-  divCard.appendChild(course);
-  divCard.appendChild(description);
-  divCard.appendChild(informations);
-
-  document.querySelector(".container").appendChild(divCard);
+function appendNotificationsToTableAdmin(notifications) {
+  const table = document.querySelector(".container table");
+  notifications.forEach((notification) => {
+    const notificationRow = createNotificationRowAdmin(notification);
+    table.appendChild(notificationRow);
+  });
+}
+function formatDate(dateString) {
+  let date = new Date(dateString);
+  return (
+    String(date.getDate()).padStart(2, "0") +
+    "-" +
+    String(date.getMonth() + 1).padStart(2, "0") +
+    "-" +
+    date.getFullYear()
+  );
 }
