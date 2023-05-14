@@ -517,7 +517,7 @@ app.get(`/notification/:notification_id`, auth, async (req, res) => {
     if (!notification_id.match(/^[0-9a-fA-F]{24}$/)) {
       return res.status(400).send("Notification ID is in wrong format");
     }
-    const notification = await Notification.findOne({ "id": notification_id });
+    const notification = await Notification.findOne({ "_id": notification_id });
 
     if (!notification) {
       return res.status(503).send("No notification available");
