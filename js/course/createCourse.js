@@ -38,6 +38,7 @@ async function handleCreateCourse(event) {
       alert("An error occurred. Please try again later.");
     });
 }
+
 async function getLecturers() {
   try {
     const response = await fetch("https://pra-api.onrender.com/lecturers", {
