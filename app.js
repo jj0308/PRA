@@ -707,11 +707,11 @@ app.put(`/course/:course_id`, admin_auth, async (req, res) => {
 
 
     // Create user in our database
-    const updatedCourse = await Course.updateOne({"_id" : course_id}, {$set : {
+     await Course.updateOne({"_id" : course_id}, {$set : {
       "name" : name,
       "user_id" : user_id
     }});
-
+    const updatedCourse = await Course.findOne({ "_id" : course_id });
     res.status(200).json(updatedCourse);
   } catch (err) {
     console.log(err);
@@ -724,16 +724,13 @@ app.put(`/notification/:notification_id`, auth, async (req, res) => {
   try {
 
     const notification_id = req.params.notification_id;
-    const { name, description, date_expired, user_id, course_id } = req.body;
+    const { name, description, date_expired, course_id } = req.body;
 
     
 
     // Validate user input
-    if (!(name, description, date_expired, user_id, course_id)) {
+    if (!(name, description, date_expired, course_id)) {
       return res.status(400).send("All input is required");
-    }
-    if (!user_id.match(/^[0-9a-fA-F]{24}$/)) {
-      return res.status(400).send("User ID is in wrong format");
     }
     if (!course_id.match(/^[0-9a-fA-F]{24}$/)) {
       return res.status(400).send("Course ID is in wrong format");
@@ -743,10 +740,6 @@ app.put(`/notification/:notification_id`, auth, async (req, res) => {
       return res.status(400).send("Notification ID is in wrong format");
     }
 
-    const user = await User.findOne({ "_id" : course_id });
-    if (!user) {
-      return res.status(409).send("ID doesn't match any user!");
-    }
 
     const course = await Course.findOne({ "_id" : course_id });
     if (!course) {
@@ -762,14 +755,13 @@ app.put(`/notification/:notification_id`, auth, async (req, res) => {
 
 
     // Create user in our database
-    const updatedNotification = await Course.updateOne({"_id" : course_id}, {$set : {
+    await Notification.updateOne({"_id" : notification_id}, {$set : {
       "name": name, 
       "description" : description, 
-      "date_expired" : date_expired, 
-      "user_id" : user_id,
+      "date_expired" : date_expired,
       "course_id" : course_id
     }});
-
+    const updatedNotification = await Notification.findOne({ "_id" : notification_id });
     res.status(200).json(updatedNotification);
   } catch (err) {
     console.log(err);
