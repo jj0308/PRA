@@ -24,7 +24,7 @@ window.onload = function () {
     });
 
   document
-    .getElementById("btnEdit")
+    .getElementById("createNotification")
     .addEventListener("submit", (event) =>
       handleEditNotification(event, window.notificationId)
     );
@@ -83,7 +83,7 @@ async function handleEditNotification(event, notificationId) {
     .then(function (response) {
       console.log(response);
       if (response.ok) {
-        window.location.href = "/html/course/course.html";
+        window.location.href = "/html/notification/notification.html";
       } else {
         alert("Lecturer update failed. Please try again.");
       }
