@@ -755,7 +755,7 @@ app.put(`/notification/:notification_id`, auth, async (req, res) => {
 
 
     // Create user in our database
-    await Course.updateOne({"_id" : course_id}, {$set : {
+    await Notification.updateOne({"_id" : notification_id}, {$set : {
       "name": name, 
       "description" : description, 
       "date_expired" : date_expired,
