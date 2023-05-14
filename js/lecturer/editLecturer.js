@@ -55,7 +55,8 @@ function handleEditLecturer(event) {
     .then(function (response) {
       console.log(response);
       if (response.ok) {
-        window.location.href = "/html/lecturer/lecturer.html";
+        alert("Lecturer update successful.");
+        // You can perform any additional actions or updates here
       } else {
         alert("Lecturer update failed. Please try again.");
       }

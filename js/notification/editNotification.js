@@ -2,32 +2,37 @@ let url = new URL(window.location.href);
 let params = new URLSearchParams(url.search);
 window.notificationId = params.get("id");
 
-window.onload = function () {
+window.onload = async function () {
   console.log(notificationId);
-  fetch(`https://pra-api.onrender.com/notification/${window.notificationId}`, {
+  const response = await fetch(`https://pra-api.onrender.com/notification/${window.notificationId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
       "x-access-token": localStorage.getItem("token"),
     },
-  })
-    .then((response) => response.json())
-    .then(async (data) => {
-      document.getElementById("titleofNotification").value = data.name;
-      document.getElementById("description").value = data.description;
-      const courseName = await getCourseName(data.course_id);
-      document.getElementById("course").value = courseName;
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-      alert("An error occurred. Please try again later.");
-    });
+  });
 
-  document
-    .getElementById("createNotification")
-    .addEventListener("submit", (event) =>
-      handleEditNotification(event, window.notificationId)
-    );
+  const data = await response.json();
+  document.getElementById("titleofNotification").value = data.name;
+  document.getElementById("description").value = data.description;
+
+  const courses = await getCourses();
+  const courseSelect = document.getElementById("course");
+
+  // Create dropdown options
+  courses.forEach((course) => {
+    const option = document.createElement("option");
+    option.value = course._id;
+    option.textContent = course.name;
+    courseSelect.appendChild(option);
+  });
+
+  
+  // Set default option based on existing notificationId
+  courseSelect.value = data.course_id;
+  document.getElementById("createNotification").addEventListener("submit", (event) =>
+  handleEditNotification(event, window.notificationId)
+);
 };
 
 ///need to add the hande on button click
@@ -55,10 +60,10 @@ async function handleEditNotification(event, notificationId) {
 
   const title = document.getElementById("titleofNotification").value;
   const description = document.getElementById("description").value;
-  const course = document.getElementById("course").value;
+  const courseId = document.getElementById("course").value;
 
   const courses = await getCourses();
-  const courseObj = courses.find((c) => c.name === course);
+  const courseObj = courses.find((c) => c._id === courseId);
 
   if (!courseObj) {
     alert("Course not found. Please ensure the course exists.");
@@ -72,26 +77,26 @@ async function handleEditNotification(event, notificationId) {
     date_expired: Date.now(),
   };
 
-  fetch(`https://pra-api.onrender.com/notification/${notificationId}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      "x-access-token": localStorage.getItem("token"),
-    },
-    body: JSON.stringify(data),
-  })
-    .then(function (response) {
-      console.log(response);
-      if (response.ok) {
-        window.location.href = "/html/notification/notification.html";
-      } else {
-        alert("Lecturer update failed. Please try again.");
-      }
-    })
-    .catch(function (error) {
-      console.error("Error:", error);
-      alert("An error occurred. Please try again later.");
+
+  try {
+    const response = await fetch(`https://pra-api.onrender.com/notification/${notificationId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "x-access-token": localStorage.getItem("token"),
+      },
+      body: JSON.stringify(data),
     });
+
+    if (response.ok) {
+      alert("Notification update successful.");
+    } else {
+      alert("Lecturer update failed. Please try again.");
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    alert("An error occurred. Please try again later.");
+  }
 }
 
 async function getCourses() {
@@ -110,6 +115,22 @@ async function getCourses() {
       _id: item._id,
       name: item.name,
     }));
+
+    const courseSelect = document.getElementById("course");
+
+    // Create dropdown options
+    courses.forEach((course) => {
+      const option = document.createElement("option");
+      option.value = course._id;
+      option.textContent = course.name;
+      courseSelect.appendChild(option);
+    });
+
+    // Set default option based on existing notificationId
+    const defaultOption = courses.find((course) => course._id === window.notificationId);
+    if (defaultOption) {
+      courseSelect.value = defaultOption._id;
+    }
 
     return courses;
   } catch (error) {
