@@ -69,17 +69,18 @@ function createNotificationCard(notification) {
 
   let date = document.createElement("p");
   date.className = "date";
-  date.innerText = notification.date_created;
+  date.innerText = `${formatDate(notification.date_created)} - ${formatDate(
+    notification.date_expired
+  )}`;
 
   let creator = document.createElement("p");
   creator.className = "creator";
   if (notification["user"]) {
     creator.innerText = notification["user"]["full_name"];
+  } else {
+    creator.innerText = "Deleted user";
   }
-  else{
-    creator.innerText = "Deleted user"
-  }
-  
+
   informations.appendChild(date);
   informations.appendChild(creator);
 
@@ -89,4 +90,15 @@ function createNotificationCard(notification) {
   divCard.appendChild(informations);
 
   document.querySelector(".container").appendChild(divCard);
+}
+
+function formatDate(dateString) {
+  let date = new Date(dateString);
+  return (
+    String(date.getDate()).padStart(2, "0") +
+    "-" +
+    String(date.getMonth() + 1).padStart(2, "0") +
+    "-" +
+    date.getFullYear()
+  );
 }
