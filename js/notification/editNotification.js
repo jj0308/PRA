@@ -1,45 +1,23 @@
-function handleEditNotification(event) {
-  event.preventDefault();
-
-  // Get the form inputs
-  const title = document.getElementById("titleofNotification").value;
-  const course = document.getElementById("course").value;
-  const description = document.getElementById("description").value;
-
-  //nisam zna kako da dodam notification id
-  //get this notificationId form the url of the notification
-
-  const notificationId = "<NOTIFICATION_ID>";
-
-  const data = {
-    name: title,
-    course_id: course,
-    description: description,
-  };
-
-  const token = localStorage.getItem("token");
-
+let url = new URL(window.location.href);
+let params = new URLSearchParams(url.search);
+let notificationId = params.get("id");
+console.log(notificationId);
+window.onload = function () {
   fetch(`https://pra-api.onrender.com/notification/${notificationId}`, {
-    method: "PUT",
+    method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
+      "x-access-token": localStorage.getItem("token"),
     },
-    body: JSON.stringify(data),
   })
-    .then(function (response) {
-      if (response.ok) {
-        window.location.href = "/html/notification/notification.html";
-      } else {
-        alert("Notification update failed. Please try again.");
-      }
+    .then((response) => response.json())
+    .then((data) => {
+      document.getElementById("titleofNotification").value = data.name;
+      document.getElementById("course").value = data.course.name;
+      document.getElementById("description").value = data.description;
     })
-    .catch(function (error) {
+    .catch((error) => {
       console.error("Error:", error);
       alert("An error occurred. Please try again later.");
     });
-}
-
-document
-  .getElementById("createNotification")
-  .addEventListener("submit", handleEditNotification);
+};

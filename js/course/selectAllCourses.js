@@ -1,5 +1,4 @@
 let userId = localStorage.getItem("userId");
-console.log();
 
 if ("true" === localStorage.getItem("role")) {
   getCoursesAdmin();
