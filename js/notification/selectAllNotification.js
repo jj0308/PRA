@@ -67,9 +67,9 @@ function createNotificationRowAdmin(notification) {
     <a id="btnEdit" href="/html/notification/editNotification.html?id=${notification._id}">
       <img src="/media/edit.png" alt="Edit"/>
     </a>
-    <button id="btnDelete" data-notification-id="${notification._id}">
+    <a id="btnDelete" href="#!" data-notification-id="${notification._id}">
       <img src="/media/delete.png" alt="Delete" />
-    </button>
+    </a>
   `;
 
   optionsTd.appendChild(optionsWrapperDiv);
@@ -81,6 +81,11 @@ function createNotificationRowAdmin(notification) {
   notificationTr.appendChild(endDateTd);
   notificationTr.appendChild(creatorTd);
   notificationTr.appendChild(optionsTd);
+
+  let deleteButtons = document.querySelectorAll("#btnDelete");
+  deleteButtons.forEach((button) => {
+    button.addEventListener("click", deleteNotification);
+  });
 
   return notificationTr;
 }
@@ -101,4 +106,33 @@ function formatDate(dateString) {
     "-" +
     date.getFullYear()
   );
+}
+function deleteNotification(event) {
+  event.preventDefault();
+  let notificationId;
+  if (event.target.tagName === "IMG") {
+    notificationId = event.target.parentElement.dataset.notificationId;
+  } else {
+    notificationId = event.target.dataset.notificationId;
+  }
+
+  fetch(`https://pra-api.onrender.com/notification/${notificationId}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      "x-access-token": localStorage.getItem("token"),
+    },
+  })
+    .then((response) => {
+      if (response.ok) {
+        alert("Course deleted successfully.");
+        location.reload();
+      } else {
+        alert("Failed to delete course. Please try again.");
+      }
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      alert("An error occurred. Please try again later.");
+    });
 }
