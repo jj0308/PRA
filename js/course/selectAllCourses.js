@@ -1,8 +1,7 @@
-const { get } = require("http");
-role: localStorage.getItem("role");
-userId: localStorage.getItem("userId");
+let userId = localStorage.getItem("userId");
+console.log();
 
-if (role === true) {
+if ("true" === localStorage.getItem("role")) {
   getCoursesAdmin();
 } else {
   getCourses();
@@ -32,7 +31,13 @@ function appendCoursesToTable(courses) {
 
 function getCourses() {
   const url = `https://pra-api.onrender.com/courses/${userId}`;
-  fetch(url)
+  fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "x-access-token": localStorage.getItem("token"),
+    },
+  })
     .then((response) => response.json())
     .then((data) => {
       console.log(data);
@@ -47,16 +52,21 @@ function createCourseRowAdmin(course) {
   const courseOptionsTd = document.createElement("td");
   const optionsWrapperDiv = document.createElement("div");
 
-  courseNameTd.textContent = course.title;
-  courseLecturerTd.textContent = course.lecturer;
+  courseNameTd.textContent = course.name;
+  if (course.user && course.user.full_name != undefined) {
+    courseLecturerTd.textContent = course.user.full_name;
+  } else {
+    courseLecturerTd.textContent = "Currently unassigned";
+  }
 
   optionsWrapperDiv.innerHTML = `
-    <a id="btnEdit" href="/html/course/editCourse.html?id=${course.id}">
+    <a id="btnEdit" href="/html/course/editCourse.html?id=${course._id}">
       <img src="/media/edit.png" alt=""/>
     </a>
-    <button id="btnDelete">
-      <img src="/media/delete.png" alt="" />
-    </button>
+    <a id="btnDelete" href="#!" data-course-id="${course._id}">
+      <img src="/media/delete.png" alt="Delete" />
+    </a>
+
   `;
 
   courseOptionsTd.appendChild(optionsWrapperDiv);
@@ -64,6 +74,10 @@ function createCourseRowAdmin(course) {
   courseTr.appendChild(courseNameTd);
   courseTr.appendChild(courseLecturerTd);
   courseTr.appendChild(courseOptionsTd);
+  let deleteButtons = document.querySelectorAll("#btnDelete");
+  deleteButtons.forEach((button) => {
+    button.addEventListener("click", deleteCourse);
+  });
 
   return courseTr;
 }
@@ -78,7 +92,13 @@ function appendCoursesToTableAdmin(courses) {
 
 function getCoursesAdmin() {
   const url = `https://pra-api.onrender.com/courses`;
-  fetch(url)
+  fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "x-access-token": localStorage.getItem("token"),
+    },
+  })
     .then((response) => response.json())
     .then((data) => {
       console.log(data);

@@ -1,9 +1,13 @@
-function deleteUser(event) {
+function deleteCourse(event) {
   event.preventDefault();
+  let courseId;
+  if (event.target.tagName === "IMG") {
+    courseId = event.target.parentElement.dataset.courseId;
+  } else {
+    courseId = event.target.dataset.courseId;
+  }
 
-  let userId = event.currentTarget.dataset.userId;
-
-  fetch(`https://pra-api.onrender.com/lecturer/${userId}`, {
+  fetch(`https://pra-api.onrender.com/course/${courseId}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -12,10 +16,10 @@ function deleteUser(event) {
   })
     .then((response) => {
       if (response.ok) {
-        alert("User deleted successfully.");
+        alert("Course deleted successfully.");
         location.reload();
       } else {
-        alert("Failed to delete user. Please try again.");
+        alert("Failed to delete course. Please try again.");
       }
     })
     .catch((error) => {
