@@ -15,6 +15,7 @@ window.onload = function () {
       document.getElementById("firstName").value = data.first_name;
       document.getElementById("lastName").value = data.last_name;
       document.getElementById("email").value = data.email;
+   
     })
     .catch((error) => {
       console.error("Error:", error);
@@ -33,7 +34,8 @@ function handleEditLecturer(event) {
   const firstName = document.getElementById("firstName").value;
   const lastName = document.getElementById("lastName").value;
   const email = document.getElementById("email").value;
-
+  const password = document.getElementById("password").value;
+ 
   let url = new URL(window.location.href);
   let params = new URLSearchParams(url.search);
   let userId = params.get("id");
@@ -42,6 +44,7 @@ function handleEditLecturer(event) {
     first_name: firstName,
     last_name: lastName,
     email: email,
+    password: password
   };
 
   fetch(`https://pra-api.onrender.com/lecturer/${userId}`, {
@@ -56,7 +59,6 @@ function handleEditLecturer(event) {
       console.log(response);
       if (response.ok) {
         alert("Lecturer update successful.");
-        // You can perform any additional actions or updates here
       } else {
         alert("Lecturer update failed. Please try again.");
       }

@@ -82,10 +82,7 @@ function createNotificationRowAdmin(notification) {
   notificationTr.appendChild(creatorTd);
   notificationTr.appendChild(optionsTd);
 
-  let deleteButtons = document.querySelectorAll("#btnDelete");
-  deleteButtons.forEach((button) => {
-    button.addEventListener("click", deleteNotification);
-  });
+  
 
   return notificationTr;
 }
@@ -95,6 +92,10 @@ function appendNotificationsToTableAdmin(notifications) {
   notifications.forEach((notification) => {
     const notificationRow = createNotificationRowAdmin(notification);
     table.appendChild(notificationRow);
+    let deleteButtons = document.querySelectorAll("#btnDelete");
+  deleteButtons.forEach((button) => {
+    button.addEventListener("click", deleteNotification);
+  });
   });
 }
 function formatDate(dateString) {
@@ -125,7 +126,7 @@ function deleteNotification(event) {
   })
     .then((response) => {
       if (response.ok) {
-        alert("Course deleted successfully.");
+        alert("Notification deleted successfully.");
         location.reload();
       } else {
         alert("Failed to delete course. Please try again.");

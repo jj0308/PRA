@@ -25,10 +25,12 @@ async function handleLogin(event) {
       const token = data.token;
       const role = data.administrator;
       const userId = data._id;
-
+      const firstName = data.first_name;
+      const lastName = data.last_name;
+      localStorage.setItem("userId", userId);
       localStorage.setItem("token", token);
       localStorage.setItem("role", role);
-      localStorage.setItem("userId", userId);
+      localStorage.setItem("fullName", firstName + " " + lastName);
 
       window.location.href = "/html/index.html";
     } else {

@@ -16,45 +16,35 @@ window.onload = async function () {
   document.getElementById("titleofNotification").value = data.name;
   document.getElementById("description").value = data.description;
 
-  const courses = await getCourses();
+  const role = localStorage.getItem("role") === "true";
+  const userId = localStorage.getItem("userId");
+
+  if (role) {
+    const courses = await getCourses();
+    populateCourseDropdown(courses, data.course_id);
+  } else {
+    const userCourses = await getCourses(userId);
+    populateCourseDropdown(userCourses, data.course_id);
+  }
+
+  document.getElementById("createNotification").addEventListener("submit", (event) =>
+    handleEditNotification(event, window.notificationId)
+  );
+};
+
+function populateCourseDropdown(courses, selectedCourseId) {
   const courseSelect = document.getElementById("course");
 
-  // Create dropdown options
   courses.forEach((course) => {
     const option = document.createElement("option");
     option.value = course._id;
     option.textContent = course.name;
+    if (course._id === selectedCourseId) {
+      option.selected = true;
+    }
     courseSelect.appendChild(option);
   });
-
-  
-  // Set default option based on existing notificationId
-  courseSelect.value = data.course_id;
-  document.getElementById("createNotification").addEventListener("submit", (event) =>
-  handleEditNotification(event, window.notificationId)
-);
-};
-
-///need to add the hande on button click
-
-function getCourseName(courseId) {
-  return fetch(`https://pra-api.onrender.com/course/${courseId}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      "x-access-token": localStorage.getItem("token"),
-    },
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      return data.name;
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-      alert("An error occurred. Please try again later.");
-    });
 }
-
 async function handleEditNotification(event, notificationId) {
   event.preventDefault();
 
@@ -62,7 +52,16 @@ async function handleEditNotification(event, notificationId) {
   const description = document.getElementById("description").value;
   const courseId = document.getElementById("course").value;
 
-  const courses = await getCourses();
+  const role = localStorage.getItem("role") === "true";
+  const userId = localStorage.getItem("userId");
+
+  let courses;
+  if (role) {
+    courses = await getCourses();
+  } else {
+    courses = await getCourses(userId);
+  }
+
   const courseObj = courses.find((c) => c._id === courseId);
 
   if (!courseObj) {
@@ -77,31 +76,37 @@ async function handleEditNotification(event, notificationId) {
     date_expired: Date.now(),
   };
 
-
   try {
-    const response = await fetch(`https://pra-api.onrender.com/notification/${notificationId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "x-access-token": localStorage.getItem("token"),
-      },
-      body: JSON.stringify(data),
-    });
+    const response = await fetch(
+      `https://pra-api.onrender.com/notification/${notificationId}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "x-access-token": localStorage.getItem("token"),
+        },
+        body: JSON.stringify(data),
+      }
+    );
 
     if (response.ok) {
       alert("Notification update successful.");
     } else {
-      alert("Lecturer update failed. Please try again.");
+      alert("Notification update failed. Please try again.");
     }
   } catch (error) {
     console.error("Error:", error);
     alert("An error occurred. Please try again later.");
   }
 }
-
-async function getCourses() {
+async function getCourses(userId = null) {
   try {
-    const response = await fetch("https://pra-api.onrender.com/courses", {
+    let url = "https://pra-api.onrender.com/courses";
+    if (userId) {
+      url = `https://pra-api.onrender.com/courses/${userId}`;
+    }
+
+    const response = await fetch(url, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -109,28 +114,16 @@ async function getCourses() {
       },
     });
 
+    if (!response.ok) {
+      throw new Error("Error fetching courses");
+    }
+
     const data = await response.json();
 
     let courses = data.map((item) => ({
       _id: item._id,
       name: item.name,
     }));
-
-    const courseSelect = document.getElementById("course");
-
-    // Create dropdown options
-    courses.forEach((course) => {
-      const option = document.createElement("option");
-      option.value = course._id;
-      option.textContent = course.name;
-      courseSelect.appendChild(option);
-    });
-
-    // Set default option based on existing notificationId
-    const defaultOption = courses.find((course) => course._id === window.notificationId);
-    if (defaultOption) {
-      courseSelect.value = defaultOption._id;
-    }
 
     return courses;
   } catch (error) {
