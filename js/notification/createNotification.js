@@ -40,9 +40,18 @@ async function getCourses(userId = null) {
 }
 
 function populateCourseDropdown(courses) {
-  if (courses.length > 0) {
-    const courseSelect = document.getElementById("course");
+  const courseSelect = document.getElementById("course");
 
+  // Clear existing options
+  courseSelect.innerHTML = "";
+
+  // Create a default option with "Select a course" text
+  const defaultOption = document.createElement("option");
+  defaultOption.value = "";
+  defaultOption.textContent = "Select a course";
+  courseSelect.appendChild(defaultOption);
+
+  if (courses.length > 0) {
     courses.forEach((course) => {
       const option = document.createElement("option");
       option.value = course._id;
@@ -80,7 +89,7 @@ async function handleCreateNotification(event) {
   })
     .then((response) => {
       if (response.ok) {
-        window.location.href = "/html/notification/notification.html";
+        alert("Notification creation successful.");
       } else {
         alert("Notification creation failed. Please try again.");
       }
