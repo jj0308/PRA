@@ -29,7 +29,7 @@ function getNotificationsAdmin() {
       console.log(data);
       const currentDate = new Date();
       const filteredData = data.filter(
-        (notification) => new Date(notification.date_expired) > currentDate
+        (notification) => new Date(notification.date_expired) >= currentDate
       );
       if (filteredData.length > 0) {
         filteredData.forEach((notification) => {
