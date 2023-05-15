@@ -1,54 +1,23 @@
-async function handleCreateNotification(event) {
-  event.preventDefault();
+window.onload = async function() {
+  const role = localStorage.getItem("role") === "true";
+  const userId = localStorage.getItem("userId");
 
-  const titleofNotification = document.getElementById(
-    "titleofNotification"
-  ).value;
-  const course = document.getElementById("course").value;
-  const description = document.getElementById("description").value;
-
-  const courses = await getCourses();
-  const courseObj = courses.find((l) => l.name === course);
-
-  if (!courseObj) {
-    alert("Course not found. Please ensure the Course exists.");
-    return;
+  if (role) {
+    const courses = await getCourses();
+    populateCourseDropdown(courses);
+  } else {
+    const courses = await getCourses(userId);
+    populateCourseDropdown(courses);
   }
+};
 
-  const data = {
-    name: titleofNotification,
-    description: description,
-    //ovo sam harkodirao
-    data_expired: Date.now() + 60 * 60 * 1000,
-    user_id: localStorage.getItem("userId"),
-    course_id: courseObj._id,
-  };
-
-  fetch(`https://pra-api.onrender.com/notification`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-access-token": localStorage.getItem("token"),
-    },
-    body: JSON.stringify(data),
-  })
-    .then(function (response) {
-      console.log(response);
-      if (response.ok) {
-        window.location.href = "/html/notification/notification.html";
-      } else {
-        alert("Course creation failed. Please try again.");
-      }
-    })
-    .catch(function (error) {
-      console.error("Error:", error);
-      alert("An error occurred. Please try again later.");
-    });
-}
-
-async function getCourses() {
+async function getCourses(userId = null) {
   try {
-    const response = await fetch("https://pra-api.onrender.com/courses", {
+    const url = userId
+      ? `https://pra-api.onrender.com/courses/${userId}`
+      : "https://pra-api.onrender.com/courses";
+
+    const response = await fetch(url, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -58,7 +27,7 @@ async function getCourses() {
 
     const data = await response.json();
 
-    let courses = data.map((item) => ({
+    const courses = data.map((item) => ({
       _id: item._id,
       name: item.name,
     }));
@@ -66,9 +35,60 @@ async function getCourses() {
     return courses;
   } catch (error) {
     console.error("Error:", error);
+    return [];
   }
 }
 
-document
-  .getElementById("createNotification")
-  .addEventListener("submit", handleCreateNotification);
+function populateCourseDropdown(courses) {
+  if (courses.length > 0) {
+    const courseSelect = document.getElementById("course");
+
+    courses.forEach((course) => {
+      const option = document.createElement("option");
+      option.value = course._id;
+      option.textContent = course.name;
+      courseSelect.appendChild(option);
+    });
+  } else {
+    alert("No courses available. Please create courses first.");
+  }
+}
+
+async function handleCreateNotification(event) {
+  event.preventDefault();
+
+  const titleofNotification = document.getElementById("titleofNotification").value;
+  const courseSelect = document.getElementById("course");
+  const selectedCourseId = courseSelect.value;
+  const description = document.getElementById("description").value;
+
+  const data = {
+    name: titleofNotification,
+    description: description,
+    date_expired: Date.now() + 60 * 60 * 1000,
+    user_id: localStorage.getItem("userId"),
+    course_id: selectedCourseId,
+  };
+
+  fetch("https://pra-api.onrender.com/notification", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-access-token": localStorage.getItem("token"),
+    },
+    body: JSON.stringify(data),
+  })
+    .then((response) => {
+      if (response.ok) {
+        window.location.href = "/html/notification/notification.html";
+      } else {
+        alert("Notification creation failed. Please try again.");
+      }
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      alert("An error occurred. Please try again later.");
+    });
+}
+
+document.getElementById("createNotification").addEventListener("submit", handleCreateNotification);

@@ -22,13 +22,13 @@ body {
   grid-gap: 60px;
 }
 
-#notificationCard {
+.notificationCard {
   padding: 10px;
   text-align: left;
   background: rgba(244, 244, 244, 1);
 }
 
-#titleOfNotification {
+.titleOfNotification {
   font-size: 30px;
   line-height: 10px;
   font-weight: 400;
@@ -36,7 +36,7 @@ body {
   color: rgba(196, 15, 97, 1);
 }
 
-#nameOfCourse {
+.nameOfCourse {
   font-size: 20px;
   font-weight: 400;
   line-height: 24px;
@@ -44,7 +44,7 @@ body {
   text-align: left;
 }
 
-#description {
+.description {
   font-size: 14px;
   font-weight: 400;
   line-height: 17px;
@@ -52,12 +52,12 @@ body {
   text-align: justified;
 }
 
-#informations {
+.informations {
   display: flex;
   justify-content: space-between;
 }
 
-#date {
+.date {
   font-size: 15px;
   font-weight: 400;
   line-height: 18px;
@@ -65,7 +65,7 @@ body {
   text-align: center;
 }
 
-#creator {
+.creator {
   font-size: 15px;
   font-weight: 400;
   line-height: 18px;

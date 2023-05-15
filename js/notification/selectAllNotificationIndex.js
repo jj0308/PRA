@@ -1,6 +1,13 @@
 window.onload = function () {
-  let role = localStorage.getItem("role") === "true";
-  let userId = localStorage.getItem("userId");
+  const fullName = localStorage.getItem("fullName");
+  const welcomeMessage = document.createElement("p");
+  welcomeMessage.textContent = `Welcome ${fullName}!`;
+  welcomeMessage.id = "title";
+
+  document.querySelector("header").appendChild(welcomeMessage);
+
+  const role = localStorage.getItem("role") === "true";
+  const userId = localStorage.getItem("userId");
 
   if (role) {
     getNotificationsAdmin();
@@ -20,8 +27,12 @@ function getNotificationsAdmin() {
     .then((res) => res.json())
     .then((data) => {
       console.log(data);
-      if (data.length > 0) {
-        data.forEach((notification) => {
+      const currentDate = new Date();
+      const filteredData = data.filter(
+        (notification) => new Date(notification.date_expired) > currentDate
+      );
+      if (filteredData.length > 0) {
+        filteredData.forEach((notification) => {
           createNotificationCard(notification);
         });
       }
@@ -34,13 +45,18 @@ function getNotifications(userId) {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
+      "x-access-token": localStorage.getItem("token"),
     },
   })
     .then((res) => res.json())
     .then((data) => {
       console.log(data);
-      if (data.length > 0) {
-        data.forEach((notification) => {
+      const currentDate = new Date();
+      const filteredData = data.filter(
+        (notification) => new Date(notification.date_expired) > currentDate
+      );
+      if (filteredData.length > 0) {
+        filteredData.forEach((notification) => {
           createNotificationCard(notification);
         });
       }
@@ -58,7 +74,7 @@ function createNotificationCard(notification) {
 
   let course = document.createElement("p");
   course.className = "nameOfCourse";
-  course.innerText = notification["course"]["course_name"];
+  course.innerText = notification.course.course_name;
 
   let description = document.createElement("p");
   description.className = "description";
@@ -75,8 +91,8 @@ function createNotificationCard(notification) {
 
   let creator = document.createElement("p");
   creator.className = "creator";
-  if (notification["user"]) {
-    creator.innerText = notification["user"]["full_name"];
+  if (notification.user) {
+    creator.innerText = notification.user.full_name;
   } else {
     creator.innerText = "Deleted user";
   }
