@@ -1,7 +1,13 @@
 let userId = localStorage.getItem("userId");
 
 if ("true" === localStorage.getItem("role")) {
+  const courseTable = document.getElementById("courseTable");
+  const tableHeaderRow = courseTable.querySelector("tr");
+  const optionsHeader = document.createElement("th");
+  optionsHeader.textContent = "Options";
+  tableHeaderRow.appendChild(optionsHeader);  
   addCreateCourseLink();
+
   getCoursesAdmin();
 } else {
   getCourses();
@@ -22,7 +28,6 @@ function createCourseRow(course) {
 }
 function appendCoursesToTable(courses) {
   const table = document.querySelector(".container table");
-  table.innerHTML = ""; // Clear the table before appending new courses
 
   courses.forEach((course) => {
     const courseRow = createCourseRow(course);
@@ -43,7 +48,6 @@ function getCourses() {
     .then((data) => {
       console.log(data);
       const table = document.querySelector(".container table");
-      table.innerHTML = ""; // Clear the table
 
       if (data.length > 0) {
         data.forEach((course) => {
@@ -113,7 +117,6 @@ function appendCoursesToTableAdmin(courses) {
     table.appendChild(courseRow);
   });
 }
-
 function getCoursesAdmin() {
   const isAdmin = localStorage.getItem("role") === "true";
 
@@ -130,8 +133,40 @@ function getCoursesAdmin() {
       .then((data) => {
         console.log(data);
         appendCoursesToTableAdmin(data);
+        addDeleteEventListeners();
       });
   } else {
     getCourses();
   }
+}
+
+function addDeleteEventListeners() {
+  const deleteButtons = document.querySelectorAll("#btnDelete");
+  deleteButtons.forEach((button) => {
+    const courseId = button.getAttribute("data-course-id");
+    button.addEventListener("click", () => {
+      deleteCourse(courseId);
+    });
+  });
+}
+
+function deleteCourse(courseId) {
+  const url = `https://pra-api.onrender.com/course/${courseId}`;
+  fetch(url, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      "x-access-token": localStorage.getItem("token"),
+    },
+  })
+    .then((response) => {
+      if (response.ok) {
+        location.reload();
+      } else {
+        console.error("Failed to delete course.");
+      }
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
 }

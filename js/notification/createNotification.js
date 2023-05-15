@@ -67,6 +67,8 @@ async function handleCreateNotification(event) {
   event.preventDefault();
 
   const titleofNotification = document.getElementById("titleofNotification").value;
+  const endDate = new Date(document.getElementById("endDate").value).toLocaleDateString('en-US');
+
   const courseSelect = document.getElementById("course");
   const selectedCourseId = courseSelect.value;
   const description = document.getElementById("description").value;
@@ -74,7 +76,7 @@ async function handleCreateNotification(event) {
   const data = {
     name: titleofNotification,
     description: description,
-    date_expired: Date.now() + 60 * 60 * 1000,
+    date_expired: endDate,
     user_id: localStorage.getItem("userId"),
     course_id: selectedCourseId,
   };
