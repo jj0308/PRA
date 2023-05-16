@@ -16,7 +16,7 @@ body {
 
 .container {
   width: 80%;
-  margin: 30px auto;
+  margin: 60px auto 350px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-gap: 60px;
