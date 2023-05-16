@@ -36,9 +36,7 @@ window.onload = function () {
   
   // Clear the lecturer dropdown
   lecturerDropdown.innerHTML = "";
-  
-  // Set it as a required field
-  lecturerDropdown.required = true;
+
 
   populateLecturers();
   
@@ -84,8 +82,11 @@ async function handleCreateCourse(event) {
       if (response.ok) {
         createModalDialog("Successfully created", true);
       } else {
-        createModalDialog(response.text());
-      }
+        response.text()
+        .then(message => {
+          // Display the error message to the user
+          createModalDialog(message)
+        })      }
     })
     .catch(function (error) {
       console.error("Error:", error);

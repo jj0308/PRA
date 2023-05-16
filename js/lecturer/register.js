@@ -31,10 +31,16 @@ function handleRegister(event) {
       if (response.ok) {
         createModalDialog("Registration was successful.", true);
       } else if (response.status === 409) {
-        createModalDialog(response.text());
-      } else {
-        createModalDialog(response.text());
-      }
+        response.text()
+        .then(message => {
+          // Display the error message to the user
+          createModalDialog(message)
+        })      } else {
+        response.text()
+        .then(message => {
+          // Display the error message to the user
+          createModalDialog(message)
+        })      }
     })
     .catch(function (error) {
       console.error("Error:", error);

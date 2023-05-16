@@ -76,7 +76,7 @@ async function handleEditCourse(event) {
     name: name,
     user_id: lecturer,
   };
-  
+
   for (const key in data) {
     if (!data[key]) {
       createModalDialog("Fill all data")
@@ -98,8 +98,11 @@ async function handleEditCourse(event) {
       createModalDialog("Successfully updated", true);
       // You can perform any additional actions or updates here
     } else {
-      createModalDialog(response.text());
-    }
+ response.text()
+        .then(message => {
+          // Display the error message to the user
+          createModalDialog(message)
+        })    }
   } catch (error) {
     console.error("Error:", error);
     createModalDialog("An error occurred. Please try again later.");
