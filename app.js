@@ -171,7 +171,7 @@ app.post("/notification", auth, async(req, res) => {
     
     const { name, description, date_expired, user_id, course_id } = req.body;
     const date_created = new Date().toLocaleDateString('en-US');
-
+    const end_date = new Date(date_expired).toLocaleDateString('en-US')
     // Validate user input
     if (!(name, description, date_expired, user_id, course_id)) {
       return res.status(400).send("All input is required");
@@ -182,7 +182,7 @@ app.post("/notification", auth, async(req, res) => {
     if (!course_id.match(/^[0-9a-fA-F]{24}$/)) {
       return res.status(400).send("Course ID is in wrong format");
     }
-    if (date_expired < date_created) {
+    if (end_date < date_created) {
       return res.status(400).send("Expiration date must be a date from today or later!");
     }
     const user = await User.findOne({ "_id" : user_id });
@@ -201,7 +201,7 @@ app.post("/notification", auth, async(req, res) => {
       name,
       description,
       date_created,
-      date_expired,
+      date_expired : end_date,
       user_id,
       course_id
     });
@@ -726,7 +726,8 @@ app.put(`/notification/:notification_id`, auth, async (req, res) => {
     const notification_id = req.params.notification_id;
     const { name, description, date_expired, course_id } = req.body;
 
-    
+    const end_date = new Date(date_expired).toLocaleDateString('en-US');
+
 
     // Validate user input
     if (!(name, description, date_expired, course_id)) {
@@ -749,7 +750,10 @@ app.put(`/notification/:notification_id`, auth, async (req, res) => {
     if (!notification) {
       return res.status(409).send("ID doesn't match any notification!");
     }
-    if (date_expired < notification["date_created"]) {
+
+    const date_created = new Date(notification["date_created"]).toLocaleDateString('en-US');
+ 
+    if (end_date < date_created) {
       return res.status(400).send("Expiration date must be a more recent date!");
     }
 
@@ -758,7 +762,7 @@ app.put(`/notification/:notification_id`, auth, async (req, res) => {
     await Notification.updateOne({"_id" : notification_id}, {$set : {
       "name": name, 
       "description" : description, 
-      "date_expired" : date_expired,
+      "date_expired" : end_date,
       "course_id" : course_id
     }});
     const updatedNotification = await Notification.findOne({ "_id" : notification_id });

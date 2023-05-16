@@ -14,6 +14,8 @@ window.onload = async function () {
 
   const data = await response.json();
   document.getElementById("titleofNotification").value = data.name;
+  document.getElementById("endDate").value = new Date(data.date_expired).toISOString().split('T')[0]
+  ;
   document.getElementById("description").value = data.description;
 
   const role = localStorage.getItem("role") === "true";
@@ -49,6 +51,7 @@ async function handleEditNotification(event, notificationId) {
   event.preventDefault();
 
   const title = document.getElementById("titleofNotification").value;
+  const endDate = new Date(document.getElementById("endDate").value).toLocaleDateString('en-US');
   const description = document.getElementById("description").value;
   const courseId = document.getElementById("course").value;
 
@@ -73,7 +76,7 @@ async function handleEditNotification(event, notificationId) {
     name: title,
     description: description,
     course_id: courseObj._id,
-    date_expired: Date.now(),
+    date_expired: endDate,
   };
 
   try {
