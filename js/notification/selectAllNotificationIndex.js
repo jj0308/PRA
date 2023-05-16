@@ -26,10 +26,9 @@ function getNotificationsAdmin() {
   })
     .then((res) => res.json())
     .then((data) => {
-      console.log(data);
-      const currentDate = new Date();
+      const currentDate = new Date().toLocaleDateString('en-US');
       const filteredData = data.filter(
-        (notification) => new Date(notification.date_expired) >= currentDate
+        (notification) => new Date(notification.date_expired).toLocaleDateString('en-US') >= currentDate
       );
       if (filteredData.length > 0) {
         filteredData.forEach((notification) => {
