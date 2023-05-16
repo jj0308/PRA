@@ -68,7 +68,7 @@ async function handleEditNotification(event, notificationId) {
   const courseObj = courses.find((c) => c._id === courseId);
 
   if (!courseObj) {
-    alert("Course not found. Please ensure the course exists.");
+    createModalDialog("Course not found. Please ensure the course exists.");
     return;
   }
 
@@ -93,13 +93,13 @@ async function handleEditNotification(event, notificationId) {
     );
 
     if (response.ok) {
-      alert("Notification update successful.");
+      createModalDialog("Notification update successful.", true);
     } else {
-      alert("Notification update failed. Please try again.");
+      createModalDialog("Notification update failed. Please try again.");
     }
   } catch (error) {
     console.error("Error:", error);
-    alert("An error occurred. Please try again later.");
+    createModalDialog("An error occurred. Please try again later.");
   }
 }
 async function getCourses(userId = null) {

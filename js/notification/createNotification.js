@@ -59,7 +59,7 @@ function populateCourseDropdown(courses) {
       courseSelect.appendChild(option);
     });
   } else {
-    alert("No courses available. Please create courses first.");
+    console.log("No courses available. Please create courses first.");
   }
 }
 
@@ -91,14 +91,14 @@ async function handleCreateNotification(event) {
   })
     .then((response) => {
       if (response.ok) {
-        alert("Notification creation successful.");
+        createModalDialog("Notification creation successful.", true);
       } else {
-        alert("Notification creation failed. Please try again.");
+        createModalDialog("Notification creation failed. Please try again.");
       }
     })
     .catch((error) => {
       console.error("Error:", error);
-      alert("An error occurred. Please try again later.");
+      createModalDialog("An error occurred. Please try again later.");
     });
 }
 

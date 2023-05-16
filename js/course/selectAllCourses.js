@@ -161,12 +161,11 @@ function deleteCourse(courseId) {
   })
     .then((response) => {
       if (response.ok) {
-        location.reload();
-      } else {
-        console.error("Failed to delete course.");
+createModalDialog("Successfully deleted course.", true)} else {
+  createModalDialog("Failed to delete course.");
       }
     })
     .catch((error) => {
-      console.error("Error:", error);
+      createModalDialog("Error:", error);
     });
 }

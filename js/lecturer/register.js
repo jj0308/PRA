@@ -23,16 +23,16 @@ function handleRegister(event) {
   })
     .then(function (response) {
       if (response.ok) {
-        window.location.href = "/html/lecturer/lecturer.html";
+        createModalDialog("Registration was successful.", true);
       } else if (response.status === 409) {
-        alert("Registration failed. This user may already exist.");
+        createModalDialog("Registration failed. This user may already exist.");
       } else {
-        alert("Registration failed. Please try again.");
+        createModalDialog("Registration failed. Please try again.");
       }
     })
     .catch(function (error) {
       console.error("Error:", error);
-      alert("An error occurred. Please try again later.");
+      createModalDialog("An error occurred. Please try again later.");
     });
 }
 

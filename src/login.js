@@ -22,7 +22,7 @@ function handleLogin(event) {
     // Redirect to "potetna.html"
     window.location.href = "../html/obavijesti.html";
   } else {
-    alert("Invalid username or password.");
+    createModalDialog("Invalid username or password.");
   }
 }
 

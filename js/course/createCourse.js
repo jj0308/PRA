@@ -74,14 +74,14 @@ async function handleCreateCourse(event) {
     .then(function (response) {
       console.log(response);
       if (response.ok) {
-        alert("Lecturer registration successful.");
+        createModalDialog("Lecturer registration successful.", true);
       } else {
-        alert("Lecturer creation failed. Please try again.");
+        createModalDialog("Lecturer creation failed. Please try again.");
       }
     })
     .catch(function (error) {
       console.error("Error:", error);
-      alert("An error occurred. Please try again later.");
+      createModalDialog("An error occurred. Please try again later.");
     });
 }
 
