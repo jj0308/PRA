@@ -18,7 +18,7 @@ window.onload = function () {
     })
     .catch((error) => {
       console.error("Error:", error);
-      alert("An error occurred. Please try again later.");
+      console.log("An error occurred. Please try again later.");
     });
 
   // Attach event listener to the form
@@ -88,13 +88,13 @@ async function handleEditCourse(event) {
     });
 
     if (response.ok) {
-      alert("Course update successful.");
+      createModalDialog("Course update successful.", true);
       // You can perform any additional actions or updates here
     } else {
-      alert("Course update failed. Please try again.");
+      createModalDialog("Course update failed. Please try again.");
     }
   } catch (error) {
     console.error("Error:", error);
-    alert("An error occurred. Please try again later.");
+    createModalDialog("An error occurred. Please try again later.");
   }
 }

@@ -170,8 +170,10 @@ app.post("/notification", auth, async(req, res) => {
     // Get user input
     
     const { name, description, date_expired, user_id, course_id } = req.body;
-    const date_created = new Date().toLocaleDateString('en-US');
-    const end_date = new Date(date_expired).toLocaleDateString('en-US')
+    const date_created = new Date(new Date(new Date().toLocaleDateString('en-US')) - new Date(new Date().toLocaleDateString('en-US')).getTimezoneOffset()*60*1000);
+  
+    const end_date = new Date(Date.parse(date_expired) - new Date(date_expired).getTimezoneOffset()*60*1000);
+    console.log(end_date);
     // Validate user input
     if (!(name, description, date_expired, user_id, course_id)) {
       return res.status(400).send("All input is required");
@@ -726,9 +728,7 @@ app.put(`/notification/:notification_id`, auth, async (req, res) => {
     const notification_id = req.params.notification_id;
     const { name, description, date_expired, course_id } = req.body;
 
-    const end_date = new Date(date_expired).toLocaleDateString('en-US');
-
-
+    const end_date = new Date(Date.parse(date_expired) - new Date(date_expired).getTimezoneOffset()*60*1000);
     // Validate user input
     if (!(name, description, date_expired, course_id)) {
       return res.status(400).send("All input is required");
@@ -751,7 +751,7 @@ app.put(`/notification/:notification_id`, auth, async (req, res) => {
       return res.status(409).send("ID doesn't match any notification!");
     }
 
-    const date_created = new Date(notification["date_created"]).toLocaleDateString('en-US');
+    const date_created = new Date(notification["date_created"]);
  
     if (end_date < date_created) {
       return res.status(400).send("Expiration date must be a more recent date!");

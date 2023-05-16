@@ -25,14 +25,14 @@ function handleRegister(event) {
   })
     .then(function (response) {
       if (response.ok) {
-        window.location.href = "/html/lecturer/lecturer.html";
+        createModalDialog("Registration successful.", true);
       } else {
-        alert("Registration failed. Please try again.");
+        createModalDialog("Registration failed. Please try again.");
       }
     })
     .catch(function (error) {
       console.error("Error:", error);
-      alert("An error occurred. Please try again later.");
+      createModalDialog("An error occurred. Please try again later.");
     });
 }
 

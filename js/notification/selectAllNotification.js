@@ -126,14 +126,13 @@ function deleteNotification(event) {
   })
     .then((response) => {
       if (response.ok) {
-        alert("Notification deleted successfully.");
-        location.reload();
+        createModalDialog("Notification deleted successfully.", true);
       } else {
-        alert("Failed to delete course. Please try again.");
+        createModalDialog("Failed to delete course. Please try again.");
       }
     })
     .catch((error) => {
       console.error("Error:", error);
-      alert("An error occurred. Please try again later.");
+      createModalDialog("An error occurred. Please try again later.");
     });
 }

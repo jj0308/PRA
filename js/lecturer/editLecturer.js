@@ -19,7 +19,7 @@ window.onload = function () {
     })
     .catch((error) => {
       console.error("Error:", error);
-      alert("An error occurred. Please try again later.");
+      console.log("An error occurred. Please try again later.");
     });
 
   // Attach event listener to the form
@@ -58,13 +58,13 @@ function handleEditLecturer(event) {
     .then(function (response) {
       console.log(response);
       if (response.ok) {
-        alert("Lecturer update successful.");
+        createModalDialog("Lecturer update successful.", true);
       } else {
-        alert("Lecturer update failed. Please try again.");
+        createModalDialog("Lecturer update failed. Please try again.");
       }
     })
     .catch(function (error) {
       console.error("Error:", error);
-      alert("An error occurred. Please try again later.");
+      createModalDialog("An error occurred. Please try again later.");
     });
 }
