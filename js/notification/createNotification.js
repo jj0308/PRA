@@ -81,6 +81,14 @@ async function handleCreateNotification(event) {
     course_id: selectedCourseId,
   };
 
+  for (const key in data) {
+    if (!data[key] || data.date_expired == "Invalid Date") {
+      createModalDialog("Fill all data")
+      return;
+    }
+  }
+
+
   fetch("https://pra-api.onrender.com/notification", {
     method: "POST",
     headers: {
@@ -91,14 +99,19 @@ async function handleCreateNotification(event) {
   })
     .then((response) => {
       if (response.ok) {
-        createModalDialog("Notification creation successful.", true);
+        createModalDialog("Successfully created", true);
       } else {
-        createModalDialog("Notification creation failed. Please try again.");
+        response.text()
+        .then(message => {
+          // Display the error message to the user
+          createModalDialog(message)
+        })
       }
     })
     .catch((error) => {
       console.error("Error:", error);
       createModalDialog("An error occurred. Please try again later.");
+      
     });
 }
 

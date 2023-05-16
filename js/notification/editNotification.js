@@ -67,10 +67,6 @@ async function handleEditNotification(event, notificationId) {
 
   const courseObj = courses.find((c) => c._id === courseId);
 
-  if (!courseObj) {
-    createModalDialog("Course not found. Please ensure the course exists.");
-    return;
-  }
 
   const data = {
     name: title,
@@ -78,6 +74,14 @@ async function handleEditNotification(event, notificationId) {
     course_id: courseObj._id,
     date_expired: endDate,
   };
+  
+  for (const key in data) {
+    if (!data[key]  || data.date_expired == "Invalid Date") {
+      createModalDialog("Fill all data")
+      return;
+    }
+  }
+
 
   try {
     const response = await fetch(
@@ -93,10 +97,13 @@ async function handleEditNotification(event, notificationId) {
     );
 
     if (response.ok) {
-      createModalDialog("Notification update successful.", true);
+      createModalDialog("Successfully updated", true);
     } else {
-      createModalDialog("Notification update failed. Please try again.");
-    }
+      response.text()
+      .then(message => {
+        // Display the error message to the user
+        createModalDialog(message)
+      })    }
   } catch (error) {
     console.error("Error:", error);
     createModalDialog("An error occurred. Please try again later.");

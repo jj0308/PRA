@@ -76,6 +76,13 @@ async function handleEditCourse(event) {
     name: name,
     user_id: lecturer,
   };
+  
+  for (const key in data) {
+    if (!data[key]) {
+      createModalDialog("Fill all data")
+      return;
+    }
+  }
 
   try {
     const response = await fetch(`https://pra-api.onrender.com/course/${courseId}`, {
@@ -88,10 +95,10 @@ async function handleEditCourse(event) {
     });
 
     if (response.ok) {
-      createModalDialog("Course update successful.", true);
+      createModalDialog("Successfully updated", true);
       // You can perform any additional actions or updates here
     } else {
-      createModalDialog("Course update failed. Please try again.");
+      createModalDialog(response.text());
     }
   } catch (error) {
     console.error("Error:", error);

@@ -12,6 +12,12 @@ function handleRegister(event) {
     email: email,
     password: password,
   };
+  for (const key in data) {
+    if (!data[key]) {
+      createModalDialog("Fill all data")
+      return;
+    }
+  }
 
   fetch("https://pra-api.onrender.com/register", {
     method: "POST",
@@ -25,9 +31,9 @@ function handleRegister(event) {
       if (response.ok) {
         createModalDialog("Registration was successful.", true);
       } else if (response.status === 409) {
-        createModalDialog("Registration failed. This user may already exist.");
+        createModalDialog(response.text());
       } else {
-        createModalDialog("Registration failed. Please try again.");
+        createModalDialog(response.text());
       }
     })
     .catch(function (error) {
