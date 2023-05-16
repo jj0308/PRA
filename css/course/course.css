@@ -35,7 +35,7 @@ body {
 
 .container {
   width: 80%;
-  margin: 60px auto 250px;
+  margin: 60px auto 350px;
   background: linear-gradient(0deg, #d9d9d9, #d9d9d9),
     linear-gradient(0deg, #ffffff, #ffffff);
 }
