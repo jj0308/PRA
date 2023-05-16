@@ -31,10 +31,23 @@ nav a {
   border-radius: 5px;
   transition: background-color 0.3s ease;
 }
-nav a:hover {
-  background-color: #fff;
-  color: #000;
+ nav a{
+  background: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)),
+    linear-gradient(
+      to right,
+      rgb(255, 157, 0),
+      rgba(255, 0, 180, 1)
+    );
+  background-size: 100% 0.1em, 0 0.1em;
+  background-position: 100% 100%, 0% 100%;
+  background-repeat: no-repeat;
+  transition: background-size 400ms;
 }
+
+ nav a:hover {
+  background-size: 0 0.1em, 100% 0.1em;
+}
+
 #logoutIcon {
   height: 35px;
   width: 35px;
@@ -54,4 +67,11 @@ nav a:hover {
   font-weight: 200;
   line-height: 90px;
   text-align: center;
+}
+#btnCreate {
+  cursor: pointer;
+}
+
+#btnEdit, #btnDelete {
+  color: transparent;
 }
