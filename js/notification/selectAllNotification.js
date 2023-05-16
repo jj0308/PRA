@@ -126,10 +126,13 @@ function deleteNotification(event) {
   })
     .then((response) => {
       if (response.ok) {
-        createModalDialog("Notification deleted successfully.", true);
+        createModalDialog("Successfully deleted", true);
       } else {
-        createModalDialog("Failed to delete course. Please try again.");
-      }
+        response.text()
+        .then(message => {
+          // Display the error message to the user
+          createModalDialog(message)
+        })      }
     })
     .catch((error) => {
       console.error("Error:", error);

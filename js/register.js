@@ -13,6 +13,13 @@ function handleRegister(event) {
     password: password,
   };
 
+  for (const key in data) {
+    if (!data[key]) {
+      createModalDialog("Fill all data")
+      return;
+    }
+  }
+
   const token = localStorage.getItem("token");
 
   fetch("https://pra-backend.onrender.com/register", {
@@ -25,9 +32,9 @@ function handleRegister(event) {
   })
     .then(function (response) {
       if (response.ok) {
-        createModalDialog("Registration successful.", true);
+        createModalDialog("Successfully created", true);
       } else {
-        createModalDialog("Registration failed. Please try again.");
+        createModalDialog(response.text());
       }
     })
     .catch(function (error) {

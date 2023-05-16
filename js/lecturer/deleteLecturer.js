@@ -12,9 +12,9 @@ function deleteUser(event) {
   })
     .then((response) => {
       if (response.ok) {
-        createModalDialog("User deleted successfully.", true);
+        createModalDialog("Successfully deleted", true);
       } else {
-        createModalDialog("Failed to delete user. Please try again.");
+        createModalDialog(response.text());
       }
     })
     .catch((error) => {

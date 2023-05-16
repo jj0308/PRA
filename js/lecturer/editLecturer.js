@@ -47,6 +47,11 @@ function handleEditLecturer(event) {
     password: password
   };
 
+  if (!data.first_name|| !data.last_name, !data.email) {
+        createModalDialog("Fill all data");
+        return;
+  }
+
   fetch(`https://pra-api.onrender.com/lecturer/${userId}`, {
     method: "PUT",
     headers: {
@@ -58,7 +63,7 @@ function handleEditLecturer(event) {
     .then(function (response) {
       console.log(response);
       if (response.ok) {
-        createModalDialog("Lecturer update successful.", true);
+        createModalDialog("Successfully updated", true);
       } else {
         createModalDialog("Lecturer update failed. Please try again.");
       }

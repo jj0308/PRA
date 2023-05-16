@@ -63,6 +63,14 @@ async function handleCreateCourse(event) {
     user_id: lecturer,
   };
 
+  for (const key in data) {
+    if (!data[key]) {
+      createModalDialog("Fill all data")
+      return;
+    }
+  }
+
+
   fetch(`https://pra-api.onrender.com/course`, {
     method: "POST",
     headers: {
@@ -74,9 +82,9 @@ async function handleCreateCourse(event) {
     .then(function (response) {
       console.log(response);
       if (response.ok) {
-        createModalDialog("Lecturer registration successful.", true);
+        createModalDialog("Successfully created", true);
       } else {
-        createModalDialog("Lecturer creation failed. Please try again.");
+        createModalDialog(response.text());
       }
     })
     .catch(function (error) {
