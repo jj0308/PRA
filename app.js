@@ -96,8 +96,9 @@ app.post("/login", async (req, res) => {
       // Validate if user exist in our database
 
       const user = await User.findOne({ email });
-      const token_key = user.administrator ? process.env.ADMIN_TOKEN_KEY : process.env.TOKEN_KEY;
-      if (user && (await bcrypt.compare(password, user.password))) {
+      try {
+        const token_key = user.administrator ? process.env.ADMIN_TOKEN_KEY : process.env.TOKEN_KEY;
+        if (user && (await bcrypt.compare(password, user.password))) {
           // Create token
           const token = jwt.sign(
             { user_id: user._id, email },
@@ -112,14 +113,19 @@ app.post("/login", async (req, res) => {
 
   
           // user
-          res.status(200).json(user);
+         return res.status(200).json(user);
         }
       else{
+        return  res.status(400).send("Invalid Credentials");
+      }
+
+      } catch (error) {
         res.status(400).send("Invalid Credentials");
       }
+
       
     } catch (err) {
-      console.log(err);
+        console.log(err);
     }
     // Our register logic ends here
   });
