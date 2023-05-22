@@ -116,11 +116,11 @@ app.post("/login", async (req, res) => {
          return res.status(200).json(user);
         }
       else{
-        return  res.status(400).send("Invalid Credentials");
+        return  res.status(400).send("Wrong username or password");
       }
 
       } catch (error) {
-        res.status(400).send("Invalid Credentials");
+        res.status(400).send("Wrong username or password");
       }
 
       
