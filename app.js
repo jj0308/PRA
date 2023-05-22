@@ -43,7 +43,7 @@ app.post("/register", admin_auth, async (req, res) => {
       const oldUser = await User.findOne({ email });
 
       if (oldUser) {
-        return res.status(409).send("User Already Exist. Please Login");
+        return res.status(409).send("E-mail already in use!");
       }
   
       //Encrypt user password
@@ -638,7 +638,7 @@ app.put(`/lecturer/:user_id`, admin_auth, async (req, res) => {
     }
     const oldUser = await User.findOne({ "_id": { $ne: user_id }, "email" : email});
     if (oldUser) {
-      return res.status(400).send("Email already in use!");
+      return res.status(400).send("E-mail already in use!");
 
     }
     //Encrypt user password
