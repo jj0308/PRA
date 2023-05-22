@@ -66,3 +66,33 @@ img {
   height: auto;
   margin-bottom: 100px;
 }
+@keyframes loadingAnimation {
+  0% {
+    background:     
+    linear-gradient(to right, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+    linear-gradient(to right, rgb(0, 183, 255), rgb(0, 183, 255));
+  background-size: 100% 100%, 10% 100%;
+  background-position: 0% 100%, 0% 100%;
+  background-repeat: no-repeat;
+}
+  50% {
+    background:     
+    linear-gradient(to right, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+    linear-gradient(to right, rgb(0, 183, 255), rgb(0, 183, 255));
+  background-size: 100% 100%, 10% 100%;
+  background-position: 0% 100%, 40% 100%;
+  background-repeat: no-repeat;
+
+}
+100% {
+  background:     
+  linear-gradient(to right, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+  linear-gradient(to right, rgb(0, 183, 255), rgb(0, 183, 255));
+background-size: 100% 100%, 10% 100%;
+background-position: 0% 100%, 100% 100%;
+background-repeat: no-repeat;
+}}
+
+#submit.loading {
+  animation: loadingAnimation linear 0.5s infinite;
+}

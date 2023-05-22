@@ -1,8 +1,18 @@
 async function handleLogin(event) {
   event.preventDefault();
 
+  const submitButton = document.getElementById("submit");
   const email = document.getElementById("username").value;
   const password = document.getElementById("password").value;
+  removeErrorMessage(); // Remove previous error message
+  // Disable the submit button
+  submitButton.disabled = true;
+
+  // Change the button text to "Loading..."
+  submitButton.value = "Loading...";
+
+  // Add the "loading" class
+  submitButton.classList.add("loading");
 
   // Create the request payload
   const data = {
@@ -16,7 +26,6 @@ async function handleLogin(event) {
       headers: {
         "Content-Type": "application/json",
       },
-
       body: JSON.stringify(data),
     });
 
@@ -34,11 +43,34 @@ async function handleLogin(event) {
 
       window.location.href = "/html/index.html";
     } else {
-      throw new Error("Login failed. Please try again.");
+      const error = await response.text();
+      console.error("Error:", error);
+
+      const errorMessageElement = document.createElement("p");
+      errorMessageElement.textContent = error;
+      errorMessageElement.style.color = "red";
+      errorMessageElement.id = "error-message"; // Assign an ID to the error message element
+
+      submitButton.insertAdjacentElement("afterend", errorMessageElement);
     }
   } catch (error) {
     console.error("Error:", error);
-    alert(error.message);
+  } finally {
+    // Enable the submit button
+    submitButton.disabled = false;
+
+    // Reset the button text
+    submitButton.value = "Log In";
+
+    // Remove the "loading" class
+    submitButton.classList.remove("loading");
+  }
+}
+
+function removeErrorMessage() {
+  const errorMessageElement = document.getElementById("error-message");
+  if (errorMessageElement) {
+    errorMessageElement.remove();
   }
 }
 
