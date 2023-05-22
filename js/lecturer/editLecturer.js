@@ -39,15 +39,15 @@ function handleEditLecturer(event) {
   let url = new URL(window.location.href);
   let params = new URLSearchParams(url.search);
   let userId = params.get("id");
-
   const data = {
     first_name: firstName,
     last_name: lastName,
     email: email,
     password: password
   };
+  console.log(data);
 
-  if (!data.first_name|| !data.last_name, !data.email) {
+  if (!data.first_name|| !data.last_name || !data.email) {
         createModalDialog("Fill all data");
         return;
   }
@@ -65,7 +65,11 @@ function handleEditLecturer(event) {
       if (response.ok) {
         createModalDialog("Successfully updated", true);
       } else {
-        createModalDialog("Lecturer update failed. Please try again.");
+        response.text()
+        .then(message => {
+          // Display the error message to the user
+          createModalDialog(message)
+        })      
       }
     })
     .catch(function (error) {
